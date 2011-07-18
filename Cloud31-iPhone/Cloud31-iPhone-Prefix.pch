@@ -12,3 +12,20 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
 #endif
+
+#define RGB(r, g, b) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1]
+#define RGBA(r, g, b, a) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a]
+
+
+#define devURL @"http://localhost:8000"
+#define realURL @"http://cloud31.co.kr"
+
+#define ServiceURL @"http://localhost:8000"
+
+#define LOGIN_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/login/"]
+#define LOGOUT_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/logout/"]
+#define LOGIN_CHECK_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/login/check"]
+
+
+
+#define TIMELINE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/timeline/me/"]

@@ -8,40 +8,39 @@
 
 #import "RootViewController.h"
 
+#import "UserInfoContainer.h"
+#import "SignViewController.h"
+
+#import "RootTabBar.h"
+
 @implementation RootViewController
+
+@synthesize _tabBar;
 
 - (void)viewDidLoad
 {
+    
     [super viewDidLoad];
+    self.navigationItem.titleView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navi_logo.png"]];
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStyleDone target:self action:@selector(logout)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeFeed)];
+    [_tabBar setItems];
+    
+    
+    feedController = [[FeedViewController alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.bounds.size.height-83)];
+    [self.view addSubview:feedController.view];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
+-(void)composeFeed{
+
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
+-(void)logout{
+    [[UserInfoContainer sharedInfo] logout];
+    [self.navigationController setViewControllers:[NSArray arrayWithObject:[[SignViewController alloc] init]]];
+    
 }
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
-}
-
-/*
- // Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	// Return YES for supported orientations.
-	return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
- */
 
 // Customize the number of sections in the table view.
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -140,5 +139,6 @@
 {
     [super dealloc];
 }
+
 
 @end

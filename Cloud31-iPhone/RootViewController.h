@@ -8,9 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RootViewController : UITableViewController {
+#import "FeedViewController.h"
 
+@class RootTabBar;
+
+@interface RootViewController : UIViewController <UITableViewDelegate, UITableViewDelegate, UITabBarDelegate> {
+    IBOutlet RootTabBar *_tabBar;
+    
+    FeedViewController *feedController;
 }
 
+@property (nonatomic ,retain) IBOutlet RootTabBar *_tabBar;
 
 @end

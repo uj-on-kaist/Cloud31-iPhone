@@ -7,6 +7,9 @@
 //
 
 #import "Cloud31_iPhoneAppDelegate.h"
+#import "UserInfoContainer.h"
+
+#import "SignViewController.h"
 
 @implementation Cloud31_iPhoneAppDelegate
 
@@ -15,12 +18,23 @@
 
 @synthesize navigationController=_navigationController;
 
+
+-(void)checkLoginStatus{
+    if(![[UserInfoContainer sharedInfo] checkLogin]){
+        [self.navigationController setViewControllers:[NSArray arrayWithObject:[[SignViewController alloc] init]]];
+    }
+    [self.window makeKeyAndVisible];
+}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [application setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+
     // Override point for customization after application launch.
     // Add the navigation controller's view to the window and display.
     self.window.rootViewController = self.navigationController;
-    [self.window makeKeyAndVisible];
+    
+    //[self checkLoginStatus];
+    
     return YES;
 }
 
@@ -52,6 +66,7 @@
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
+    [self checkLoginStatus];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
