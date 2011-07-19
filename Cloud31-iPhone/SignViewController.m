@@ -16,6 +16,7 @@
 #import "Extensions/NSDictionary_JSONExtensions.h"
 
 
+#import "UserInfoContainer.h"
 
 @implementation LoginTableViewCell
 
@@ -88,7 +89,6 @@
     [self.navigationItem setPrompt:@"Checking..."];
     
     ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:LOGIN_URL]];
-    NSLog(@"%@",self.userID);
     [request setPostValue:self.userID forKey:@"userID"];
     [request setPostValue:self.userPW forKey:@"userPW"];
     [request startSynchronous];
@@ -100,7 +100,13 @@
         
         if([[json objectForKey:@"success"] isEqualToNumber:[NSNumber numberWithInt:1]]){
             [self.navigationItem setPrompt:nil];
-            [self performSelector:@selector(goToRoot) withObject:nil afterDelay:1.0f];
+            [[UserInfoContainer sharedInfo] setUserID:userID];
+            [[UserInfoContainer sharedInfo] setUserPW:userPW];
+            [[UserInfoContainer sharedInfo] saveUserLoginInfo];
+            
+            if([[UserInfoContainer sharedInfo] checkLogin]){
+                [self performSelector:@selector(goToRoot) withObject:nil afterDelay:0.25];
+            }
         }else{
             [self.navigationItem setPrompt:@"Check ID and Password."];
         }

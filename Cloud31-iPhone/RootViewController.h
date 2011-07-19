@@ -8,14 +8,26 @@
 
 #import <UIKit/UIKit.h>
 
-#import "FeedViewController.h"
+#import "HomeViewController.h"
+#import "CompanyViewController.h"
+#import "MessageViewController.h"
+#import "SettingViewController.h"
+#import "SearchViewController.h"
+
+#import "FeedPostViewController.h"
 
 @class RootTabBar;
 
-@interface RootViewController : UIViewController <UITableViewDelegate, UITableViewDelegate, UITabBarDelegate> {
+@interface RootViewController : UIViewController <UITableViewDelegate, UITableViewDelegate, UITabBarDelegate, FeedPostDelegate> {
     IBOutlet RootTabBar *_tabBar;
     
-    FeedViewController *feedController;
+    HomeViewController *homeViewController;
+    CompanyViewController *companyViewController;
+    MessageViewController *messageViewController;
+    SearchViewController *searchViewController;
+    SettingViewController *settingViewController;
+        
+    UIViewController *currentViewController;
 }
 
 @property (nonatomic ,retain) IBOutlet RootTabBar *_tabBar;

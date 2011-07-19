@@ -11,6 +11,9 @@
 #import "ASIHTTPRequest.h"
 #import "Extensions/NSDictionary_JSONExtensions.h"
 
+#import "Cloud31_iPhoneAppDelegate.h"
+#import "SignViewController.h"
+
 @implementation UserInfoContainer
 
 @synthesize userID, userPW, userInfo;
@@ -32,7 +35,7 @@ static UserInfoContainer *sharedInfo = NULL;
     [prefs synchronize];
     return YES;
 }
--(NSString *)getUserID{
+-(NSString *)userID{
     NSString *_userID=userID;
     if([_userID isEqualToString:@""] || !_userID){
         NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
@@ -40,13 +43,19 @@ static UserInfoContainer *sharedInfo = NULL;
     }
     return _userID;
 }
--(NSString *)getUserPW{
+-(NSString *)userPW{
     NSString *_userPW=userPW;
     if([_userPW isEqualToString:@""] || !_userPW){
         NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
         _userPW = [prefs stringForKey:@"userPW"];
     }
     return _userPW;
+}
+
+-(NSDictionary *)userInfo{
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    NSDictionary *_userInfo = [prefs dictionaryForKey:@"userInfo"];
+    return _userInfo;
 }
 
 -(BOOL)checkLogin{
@@ -59,6 +68,10 @@ static UserInfoContainer *sharedInfo = NULL;
         NSError *theError = NULL;
         userInfo = [NSDictionary dictionaryWithJSONString:response error:&theError];
         if(!theError && [[userInfo objectForKey:@"success"] isEqualToNumber:[NSNumber numberWithInt:1]]){
+            NSDictionary *_userInfo = [NSDictionary dictionaryWithDictionary:userInfo];
+            NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+            [prefs setObject:_userInfo forKey:@"userInfo"];
+            [prefs synchronize];
             return YES;
         }else{
             return NO;
@@ -73,6 +86,9 @@ static UserInfoContainer *sharedInfo = NULL;
     NSLog(@"Logout");
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:LOGOUT_URL]];
     [request startSynchronous];
+    
+    Cloud31_iPhoneAppDelegate *app_delegate = (Cloud31_iPhoneAppDelegate *)[[UIApplication sharedApplication] delegate];
+    [app_delegate.navigationController setViewControllers:[NSArray arrayWithObject:[[SignViewController alloc] init]]];
 }
 
 @end

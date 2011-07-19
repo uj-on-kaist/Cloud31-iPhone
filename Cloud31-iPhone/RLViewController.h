@@ -18,6 +18,7 @@
     
     NSMutableArray *items;
     UITableView *_tableView;
+    UIView *loadingView;
 }
 
 @property (nonatomic, retain) UITableView *_tableView;

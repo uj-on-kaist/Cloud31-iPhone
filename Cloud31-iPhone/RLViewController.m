@@ -17,12 +17,28 @@
     self = [super init];
     self.view.frame = frame;
     if (self) {
-        if(items == nil)
-            items = [[NSMutableArray alloc] init];
+        items = [[NSMutableArray alloc] init];
+        
+        loadingView = [[UIView alloc] initWithFrame:self.view.frame];
+        UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(140, 165, 100, 20)];
+        label.text=@"Loading...";
+        label.textColor=[UIColor darkGrayColor];
+
+        label.backgroundColor=[UIColor clearColor];
+        UIActivityIndicatorView *activity=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        activity.frame=CGRectMake(110, 165, 20, 20);
+        [activity startAnimating];
+        
+        [loadingView addSubview:activity];
+        [loadingView addSubview:label];
+        loadingView.backgroundColor=BACKGROUND_COLOR;
+        [self.view addSubview:loadingView];
+        
         _tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
         _tableView.delegate=self;
         _tableView.dataSource=self;
-        [self.view addSubview:_tableView];
+        _tableView.backgroundColor=BACKGROUND_COLOR;
+        //[self.view addSubview:_tableView];
         
         if (_refreshHeaderView == nil) {
             
@@ -43,6 +59,7 @@
 - (void)dealloc
 {
     _refreshHeaderView = nil;
+    [loadingView release];
     [_tableView release];
     [items release];
     [super dealloc];
@@ -50,8 +67,17 @@
 
 -(void)viewDidLoad{
     [super viewDidLoad];
-    [self loadData];
-    [_tableView reloadData];
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    
+    if([items count] == 0){
+        if([loadingView superview] == nil)
+            [self.view addSubview:loadingView];
+        
+        [self performSelector:@selector(loadData)];
+    }
 }
 
 #pragma mark -
@@ -92,7 +118,7 @@
 	//  model should call this when its done loading
 	_reloading = NO;
 	[_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self._tableView];
-	
+	[_tableView reloadData];
 }
 
 #pragma mark -
@@ -135,6 +161,14 @@
 
 
 -(void)loadData{
+    NSLog(@"hihi");
+    if([loadingView superview]){
+        [loadingView removeFromSuperview];
+    }
+    if([_tableView superview] == nil){
+        [self.view addSubview:_tableView];
+    }
+    [_tableView reloadData];
     
 }
 

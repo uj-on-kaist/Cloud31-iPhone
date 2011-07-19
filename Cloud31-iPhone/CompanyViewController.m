@@ -6,14 +6,14 @@
 //  Copyright 2011 KAIST. All rights reserved.
 //
 
-#import "FeedViewController.h"
+#import "CompanyViewController.h"
 
 #import "ASIHTTPRequest.h"
 #import "Extensions/NSDictionary_JSONExtensions.h"
 
 #import "FeedTableViewCell.h"
 
-@implementation FeedViewController
+@implementation CompanyViewController
 
 - (void)dealloc
 {
@@ -57,17 +57,24 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+- (void)reloadTableViewDataSource{
+	
+	//  should be calling your tableviews data source model to reload
+	//  put here just for demo
+	_reloading = YES;
+	[self performSelector:@selector(loadData) withObject:nil afterDelay:0.1];
+}
+
 - (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view{
 	
 	[self reloadTableViewDataSource];
-    //[self loadData];
     [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0.5];
 	
 }
 
 -(void)loadData{
     NSLog(@"Load data");
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:TIMELINE_URL]];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:COMPANY_FEED_URL]];
     [request startSynchronous];
     NSError *error = [request error];
     if (!error) {
@@ -79,11 +86,12 @@
             NSArray *array = [json objectForKey:@"feeds"];
             items = [[NSMutableArray alloc] init];
             for(NSDictionary *item in array){
-                [items addObject:item];
+                NSMutableDictionary *_item = [NSMutableDictionary dictionaryWithDictionary:item];
+                [items addObject:_item];
             }
-            [_tableView reloadData];
         }
     }
+    [super loadData];
 }
 
 
@@ -98,8 +106,7 @@
     
     NSMutableDictionary *item = [items objectAtIndex:indexPath.row];
     [cell prepareData:item];
-	// Configure the cell.
-    
+	
     return cell;
 }
 
@@ -109,9 +116,22 @@
     }
     if([items count] > 0){
         NSMutableDictionary *item = [items objectAtIndex:indexPath.row];
-        return [FeedTableViewCell calculateHeight:item];
+        if([item valueForKey:@"height"]){
+            return [[item valueForKey:@"height"] floatValue];
+        }else{
+            CGFloat height = [FeedTableViewCell calculateHeight:item];
+            [item setValue:[NSNumber numberWithFloat:height] forKey:@"height"];
+            return height;
+        }        
     }
     return 44.0f;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    
+    [cell setSelected:NO animated:YES];
+    
 }
 
 @end

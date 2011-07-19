@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "RLViewController.h"
 
-@interface FeedViewController : RLViewController {
+@interface CompanyViewController : RLViewController {
     
 }
 

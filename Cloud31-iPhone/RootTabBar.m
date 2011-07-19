@@ -21,15 +21,36 @@
 }
 
 -(void)setItems{
-    UITabBarItem *feed = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_feed.png"] tag:0];
-    UITabBarItem *message = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_message.png"] tag:1];
-    UITabBarItem *search = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_search.png"] tag:2];
-    UITabBarItem *more = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_more.png"] tag:3];
+    UITabBarItem *home = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_home.png"] tag:0];
+    UITabBarItem *company = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_company.png"] tag:1];
+    UITabBarItem *message = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_message.png"] tag:2];
+    UITabBarItem *search = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_search.png"] tag:3];
+    UITabBarItem *setting = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_setting.png"] tag:4];
     
-    NSArray *array=[NSArray arrayWithObjects:feed,message,search,more,nil];
+    NSArray *array=[NSArray arrayWithObjects:home,company,message,search,setting,nil];
     [self setItems:array];
     
-    [self setSelectedItem:feed];
+    [self setSelectedItem:home];
+    
+    bubble = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tabbar_bubble.png"]];
+    //22
+    bubble.frame=CGRectMake(22,-8, 19, 10);
+    [self addSubview:bubble];
+}
+
+-(void)tabbarSelected:(int)index{
+    int position = 64*index+22;
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.2];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    CGRect frame = bubble.frame;
+    frame.origin.x=position;
+    bubble.frame=frame;
+    
+    // Commit the changes
+    [UIView commitAnimations];
 }
 
 @end

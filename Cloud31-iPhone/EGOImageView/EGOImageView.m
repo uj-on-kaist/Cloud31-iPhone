@@ -62,6 +62,9 @@
 	UIImage* anImage = [[EGOImageLoader sharedImageLoader] imageForURL:aURL shouldLoadWithObserver:self];
 	
 	if(anImage) {
+        if([self.delegate respondsToSelector:@selector(imageViewLoadedImage:)]) {
+            [self.delegate imageViewLoadedImage:self];
+        }
 		self.image = anImage;
 	} else {
 		self.image = self.placeholderImage;
@@ -82,9 +85,9 @@
 	UIImage* anImage = [[notification userInfo] objectForKey:@"image"];
 	self.image = anImage;
 	[self setNeedsDisplay];
-	
+
 	if([self.delegate respondsToSelector:@selector(imageViewLoadedImage:)]) {
-		[self.delegate imageViewLoadedImage:self];
+        [self.delegate imageViewLoadedImage:self];
 	}	
 }
 

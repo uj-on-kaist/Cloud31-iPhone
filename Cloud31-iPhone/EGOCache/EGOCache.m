@@ -221,7 +221,7 @@ static EGOCache* __instance;
 #if TARGET_OS_IPHONE
 
 - (UIImage*)imageForKey:(NSString*)key {
-	return [UIImage imageWithContentsOfFile:cachePathForKey(key)];
+	return [UIImage imageWithData:[self dataForKey:key]];
 }
 
 - (void)setImage:(UIImage*)anImage forKey:(NSString*)key {
@@ -229,7 +229,12 @@ static EGOCache* __instance;
 }
 
 - (void)setImage:(UIImage*)anImage forKey:(NSString*)key withTimeoutInterval:(NSTimeInterval)timeoutInterval {
-	[self setData:UIImagePNGRepresentation(anImage) forKey:key withTimeoutInterval:timeoutInterval];
+    UIGraphicsBeginImageContext(CGSizeMake(45.0f, 45.0f));
+    [anImage drawInRect:CGRectMake(0, 0, 45.0f, 45.0f)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();    
+    UIGraphicsEndImageContext();
+    
+	[self setData:UIImagePNGRepresentation(newImage) forKey:key withTimeoutInterval:timeoutInterval];
 }
 
 

@@ -10,9 +10,10 @@
 
 
 @interface RootTabBar : UITabBar {
-    
+    UIImageView *bubble;
 }
 
 -(void)setItems;
+-(void)tabbarSelected:(int)index;
 
 @end

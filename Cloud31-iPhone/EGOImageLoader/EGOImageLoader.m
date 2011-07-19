@@ -88,6 +88,7 @@ inline static NSString* keyForURL(NSURL* url) {
 }
 
 - (void)loadImageForURL:(NSURL*)aURL observer:(id<EGOImageLoaderObserver>)observer {
+    
 	if(!aURL) return;
 	
 	if([observer respondsToSelector:@selector(imageLoaderDidLoad:)]) {
@@ -118,7 +119,7 @@ inline static NSString* keyForURL(NSURL* url) {
 	UIImage* anImage = [[EGOCache currentCache] imageForKey:keyForURL(aURL)];
 	
 	if(anImage) {
-		return anImage;
+        return anImage;
 	} else {
 		[self loadImageForURL:(NSURL*)aURL observer:observer];
 		return nil;
@@ -143,8 +144,12 @@ inline static NSString* keyForURL(NSURL* url) {
 
 - (void)imageLoadConnectionDidFinishLoading:(EGOImageLoadConnection *)connection {
 	UIImage* anImage = [UIImage imageWithData:connection.responseData];
-	
-	if(!anImage) {
+	UIGraphicsBeginImageContext(CGSizeMake(45.0f, 45.0f));
+    [anImage drawInRect:CGRectMake(0, 0, 45.0f, 45.0f)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();    
+    UIGraphicsEndImageContext();
+    
+	if(!newImage) {
 		NSError* error = [NSError errorWithDomain:[connection.imageURL host] code:406 userInfo:nil];
 		NSNotification* notification = [NSNotification notificationWithName:kImageNotificationLoadFailed(connection.imageURL)
 																	 object:self
@@ -159,7 +164,7 @@ inline static NSString* keyForURL(NSURL* url) {
 		
 		NSNotification* notification = [NSNotification notificationWithName:kImageNotificationLoaded(connection.imageURL)
 																	 object:self
-																   userInfo:[NSDictionary dictionaryWithObjectsAndKeys:anImage,@"image",connection.imageURL,@"imageURL",nil]];
+																   userInfo:[NSDictionary dictionaryWithObjectsAndKeys:newImage,@"image",connection.imageURL,@"imageURL",nil]];
 		
 		[[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:YES];
 	}
