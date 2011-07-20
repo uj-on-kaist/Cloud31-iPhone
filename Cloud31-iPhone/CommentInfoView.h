@@ -15,4 +15,8 @@
 }
 
 @property (nonatomic, retain) UILabel *label;
+
+-(void)setStarOn;
+-(void)setStarOff;
+-(void)setCommentCount:(int)count;
 @end

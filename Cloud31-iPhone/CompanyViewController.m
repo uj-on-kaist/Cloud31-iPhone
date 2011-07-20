@@ -12,6 +12,8 @@
 #import "Extensions/NSDictionary_JSONExtensions.h"
 
 #import "FeedTableViewCell.h"
+#import "FeedDetailViewController.h"
+#import "Cloud31_iPhoneAppDelegate.h"
 
 @implementation CompanyViewController
 
@@ -42,6 +44,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.title=@"Main";
 }
 
 - (void)viewDidUnload
@@ -75,9 +78,21 @@
 -(void)loadData{
     NSLog(@"Load data");
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:COMPANY_FEED_URL]];
-    [request startSynchronous];
-    NSError *error = [request error];
-    if (!error) {
+    [request setDelegate:self];
+    [request startAsynchronous];
+    _data_loading=YES;
+}
+
+-(void)loadMoreData:(int)base_id{
+    [super loadMoreData:base_id];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?base_id=%d",COMPANY_FEED_URL, base_id]]];
+    [request setDelegate:self];
+    _data_loading=NO;
+    [request startAsynchronous];
+}
+- (void)requestFinished:(ASIHTTPRequest *)request
+{
+    if(_data_loading){
         NSString *response = [request responseString];
         //NSLog(@"%@",response);
         NSError *theError = NULL;
@@ -87,11 +102,47 @@
             items = [[NSMutableArray alloc] init];
             for(NSDictionary *item in array){
                 NSMutableDictionary *_item = [NSMutableDictionary dictionaryWithDictionary:item];
+                [_item setObject:@"false" forKey:@"load_more"];
                 [items addObject:_item];
             }
+            if([items count] != 0){
+                [items addObject:[NSMutableDictionary dictionaryWithObject:@"true" forKey:@"load_more"]];
+            }
         }
+        _data_loading=NO;
+        [super loadData];
+    }else{
+        // Use when fetching text data
+        NSString *response = [request responseString];
+        //NSLog(@"%@",response);
+        NSError *theError = NULL;
+        NSDictionary *json = [NSDictionary dictionaryWithJSONString:response error:&theError];
+        if(!theError && [[json objectForKey:@"success"] isEqualToNumber:[NSNumber numberWithInt:1]]){
+            NSArray *array = [json objectForKey:@"feeds"];
+            [items removeLastObject];
+            for(NSDictionary *item in array){
+                NSMutableDictionary *_item = [NSMutableDictionary dictionaryWithDictionary:item];
+                [_item setObject:@"false" forKey:@"load_more"];
+                [items addObject:_item];
+            }
+            if([array count] != 0){
+                [items addObject:[NSMutableDictionary dictionaryWithObject:@"true" forKey:@"load_more"]];
+            }
+        }
+        [super loadMoreDataFinished:0];
     }
-    [super loadData];
+}
+
+- (void)requestFailed:(ASIHTTPRequest *)request
+{
+    if(_data_loading){
+    
+    }else{
+        NSError *error = [request error];
+        NSLog(@"%@",[error localizedDescription]);
+        [items removeLastObject];
+        [super loadMoreDataFinished:0];
+    }
 }
 
 
@@ -103,10 +154,19 @@
     if (cell == nil) {
         cell = [[[FeedTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
-    
     NSMutableDictionary *item = [items objectAtIndex:indexPath.row];
+    if([[item objectForKey:@"load_more"] isEqualToString:@"true"]){
+        UITableViewCell *load_cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"load_more"];
+        UIActivityIndicatorView *activity=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        activity.frame=CGRectMake(150,12, 20, 20);
+        [activity startAnimating];
+        [load_cell addSubview:activity];
+        
+        NSMutableDictionary *last_item = [items objectAtIndex:([items count] - 2)];
+        [self loadMoreData:[[last_item objectForKey:@"base_id"] intValue]];
+        return load_cell;
+    }
     [cell prepareData:item];
-	
     return cell;
 }
 
@@ -116,6 +176,9 @@
     }
     if([items count] > 0){
         NSMutableDictionary *item = [items objectAtIndex:indexPath.row];
+        if([[item objectForKey:@"load_more"] isEqualToString:@"true"]){
+            return 44.0f;
+        }
         if([item valueForKey:@"height"]){
             return [[item valueForKey:@"height"] floatValue];
         }else{
@@ -131,7 +194,10 @@
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
     [cell setSelected:NO animated:YES];
-    
+    NSMutableDictionary *item = [items objectAtIndex:indexPath.row];
+    FeedDetailViewController *feedDetailViewController = [[FeedDetailViewController alloc] initWithItem:item];
+    Cloud31_iPhoneAppDelegate *app_delegate = (Cloud31_iPhoneAppDelegate *)[[UIApplication sharedApplication] delegate];
+    [app_delegate.navigationController pushViewController:feedDetailViewController animated:YES];
 }
 
 @end

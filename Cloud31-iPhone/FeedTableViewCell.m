@@ -21,7 +21,7 @@
         UIView *border = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 1)];
         border.backgroundColor=[UIColor whiteColor];
         [self addSubview:border];
-        self.contentView.backgroundColor=RGB(245, 245, 245);
+        self.contentView.backgroundColor=RGB2(245, 245, 245);
 //        bgView= [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"CellGradientBackground.png"]];
 //        bgView.backgroundColor=[UIColor whiteColor];
 //        bgView.frame=CGRectMake(0, 0, 320, 43);
@@ -37,7 +37,7 @@
         author_label = [[UILabel alloc] initWithFrame:CGRectMake(57, 5, 160, 15)];
         author_label.text=@"author";
         author_label.font=[UIFont boldSystemFontOfSize:14.0f];
-        author_label.textColor=RGB(50,90,170);
+        author_label.textColor=RGB2(50,90,170);
         author_label.backgroundColor=[UIColor clearColor];
         [self addSubview:author_label];
         
@@ -62,7 +62,7 @@
         
         [self addSubview:date_label];
         
-        self.selectionStyle=UITableViewCellSelectionStyleGray;
+        //self.selectionStyle=UITableViewCellSelectionStyleGray;
     }
     return self;
 }
@@ -94,8 +94,14 @@
     
     NSString *url=[NSString stringWithFormat:@"%@%@",ServiceURL,[item objectForKey:@"author_picture"]];
     [profileView setImageURL:[NSURL URLWithString:url]];
+    if([[item objectForKey:@"favorite"] boolValue]){
+        [comment_info setStarOn];
+    }else{
+        [comment_info setStarOff];
+    }
     
-    
+    int comment_count = [[item objectForKey:@"comments"] count];
+    [comment_info setCommentCount:comment_count];
 //    bgView.frame=CGRectMake(0, 0, 320, contents_label.frame.size.height+50);
     
 }

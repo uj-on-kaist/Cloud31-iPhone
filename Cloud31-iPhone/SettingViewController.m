@@ -12,6 +12,8 @@
 
 #import <QuartzCore/QuartzCore.h>
 
+#import "UserProfileSmallView.h"
+
 @implementation SettingViewController
 
 @synthesize _tableView;
@@ -25,48 +27,16 @@
         _tableView.dataSource=self;
         [self.view addSubview:_tableView];
         
-        UIView *profileView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 70)];
-        EGOImageView *picture = [[EGOImageView alloc] initWithPlaceholderImage:[UIImage imageNamed:@"empty.png"]];
-        picture.frame= CGRectMake(10, 10, 50, 50);
-        picture.layer.cornerRadius=5;
-        picture.clipsToBounds=YES;
-        
-        
-        picture.contentMode=UIViewContentModeScaleToFill;
+        UserProfileSmallView *profileView = [[UserProfileSmallView alloc] init];
         NSDictionary *userInfo = [[UserInfoContainer sharedInfo] userInfo];
-        [picture setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",ServiceURL, [userInfo objectForKey:@"picture"]]]];
-        [profileView addSubview:picture];
+        [profileView.picture setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",ServiceURL, [userInfo objectForKey:@"picture"]]]];
         
+
+        profileView.name.text=[userInfo objectForKey:@"username"];
+
+        profileView.userID.text=[NSString stringWithFormat:@"@%@",[[UserInfoContainer sharedInfo] userID]];
         
-        UILabel *name=[[UILabel alloc] initWithFrame:CGRectMake(70, 10, 200, 16)];
-        name.backgroundColor=[UIColor clearColor];
-        name.font=[UIFont boldSystemFontOfSize:16.0f];
-        name.textColor = [UIColor darkTextColor];
-        name.shadowColor = RGBA(255, 255, 255, 0.75);
-        name.shadowOffset = CGSizeMake(0.0, 1.0);
-        name.text=[userInfo objectForKey:@"username"];
-        [profileView addSubview:name];
-        
-        UILabel *userID=[[UILabel alloc] initWithFrame:CGRectMake(70, 30, 200, 14)];
-        userID.backgroundColor=[UIColor clearColor];
-        userID.font=[UIFont systemFontOfSize:13.0f];
-        userID.textColor = [UIColor darkTextColor];
-        userID.shadowColor = RGBA(255, 255, 255, 0.5);
-        userID.shadowOffset = CGSizeMake(0.0, 1.0);
-        userID.shadowOffset = CGSizeMake(1.0, 1.0);
-        userID.text=[NSString stringWithFormat:@"@%@",[[UserInfoContainer sharedInfo] userID]];
-        [profileView addSubview:userID];
-        
-        UILabel *userDept=[[UILabel alloc] initWithFrame:CGRectMake(70, 45, 200, 14)];
-        userDept.backgroundColor=[UIColor clearColor];
-        userDept.font=[UIFont systemFontOfSize:13.0f];
-        userDept.textColor = [UIColor darkTextColor];
-        userDept.shadowColor = RGBA(255, 255, 255, 0.5);
-        userDept.shadowOffset = CGSizeMake(0.0, 1.0);
-        userDept.shadowOffset = CGSizeMake(1.0, 1.0);
-        userDept.text=[NSString stringWithFormat:@"%@ %@",[userInfo objectForKey:@"dept"], [userInfo objectForKey:@"position"]];
-        [profileView addSubview:userDept];
-        
+        profileView.userDept.text=[NSString stringWithFormat:@"%@ %@",[userInfo objectForKey:@"dept"], [userInfo objectForKey:@"position"]];
         
         [_tableView setTableHeaderView:profileView];
         
@@ -118,11 +88,11 @@
     }else if(indexPath.section == 1){
         cell.textLabel.text=@"프로필 사진 변경";
         cell.textLabel.textAlignment=UITextAlignmentCenter;
-        cell.textLabel.textColor=RGB(50, 90, 180);
+        cell.textLabel.textColor=RGB2(50, 90, 180);
     }else{
         cell.textLabel.text=@"로그아웃";
         cell.textLabel.textAlignment=UITextAlignmentCenter;
-        cell.textLabel.textColor=RGB(50, 90, 180);
+        cell.textLabel.textColor=RGB2(50, 90, 180);
     }
     
     return cell;

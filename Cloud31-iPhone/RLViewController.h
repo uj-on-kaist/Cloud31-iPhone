@@ -19,6 +19,10 @@
     NSMutableArray *items;
     UITableView *_tableView;
     UIView *loadingView;
+    
+    BOOL _load_more;
+    
+    BOOL _data_loading;
 }
 
 @property (nonatomic, retain) UITableView *_tableView;
@@ -30,5 +34,6 @@
 - (void)doneLoadingTableViewData;
 
 -(void)loadData;
-
+-(void)loadMoreData:(int)base_id;
+-(void)loadMoreDataFinished:(int)result;
 @end

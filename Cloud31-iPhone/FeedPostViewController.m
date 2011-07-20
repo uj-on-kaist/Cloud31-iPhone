@@ -10,6 +10,10 @@
 #import "UserInfoContainer.h"
 #import <QuartzCore/QuartzCore.h>
 
+
+#import "ASIFormDataRequest.h"
+#import "Extensions/NSDictionary_JSONExtensions.h"
+
 @implementation FeedPostViewController
 
 @synthesize userLabel, inputView;
@@ -98,11 +102,57 @@
 
 
 -(IBAction)write{
-    [self dismissModalViewControllerAnimated:YES];
-    if([delegate respondsToSelector:@selector(feedUploaded:)]){
-        [delegate feedUploaded:0];
+    NSString *text = [[inputView text] stringByReplacingOccurrencesOfString:@" " withString:@""];
+    if([text isEqualToString:@""]){
+        return;
     }
+    if([inputView isFirstResponder]){
+        [inputView resignFirstResponder];
+    }
+
+    HUD = [[MBProgressHUD alloc] initWithView:self.view];
+	
+    HUD.labelText = @"Updating...";
+    
+    [self.view addSubview:HUD];
+    
+    [HUD show:YES];
+    [self performSelector:@selector(updatePost) withObject:nil afterDelay:0.25f];
 }
 
+-(void)updatePost{
+    
+    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:FEED_UPDATE_URL]];
+    [request setPostValue:[inputView text] forKey:@"message"];
+    [request startSynchronous];
+    NSError *error = [request error];
+    if (!error) {
+        NSString *response = [request responseString];
+        NSError *theError = NULL;
+        NSDictionary *json = [NSDictionary dictionaryWithJSONString:response error:&theError];
+        NSLog(@"%@",json);
+        if([[json objectForKey:@"success"] isEqualToNumber:[NSNumber numberWithInt:1]]){
+            [self.navigationItem setPrompt:nil];
+            [HUD hide:NO];
+            [self dismissModalViewControllerAnimated:YES];
+            if([delegate respondsToSelector:@selector(feedUploaded:)]){
+                [delegate feedUploaded:nil];
+            }
+            
+        }else{
+            [HUD hide:NO];
+            HUD.labelText = @"Error Occured";
+            [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+        }
+        
+    }else{
+        HUD.labelText = @"Error Occured";
+        [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+        NSLog(@"%@",[error localizedDescription]);
+    }
+}
+-(void)myTask {
+    sleep(1);
+}
 
 @end

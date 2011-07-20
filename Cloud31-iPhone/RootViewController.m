@@ -23,8 +23,9 @@
 {
     
     [super viewDidLoad];
+    self.title=@"Main";
     self.navigationItem.titleView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navi_logo.png"]];
-    
+    self.navigationController.navigationBar.tintColor=RGB2(50, 90, 180);
 
     //self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"My Feed" style:UIBarButtonItemStyleDone target:self action:@selector(changeFeedType)];
     
@@ -41,7 +42,7 @@
     homeViewController = [[HomeViewController alloc] initWithFrame:frame];
     
     
-    currentViewController = messageViewController;
+    currentViewController = homeViewController;
     
     
     [self.view addSubview:currentViewController.view];
@@ -60,11 +61,11 @@
     [self.navigationController presentModalViewController:postController animated:YES];
 }
 
--(void)feedUploaded:(int)result{
+-(void)feedUploaded:(NSMutableDictionary *)item{
     if([currentViewController respondsToSelector:@selector(loadData)]){
         [currentViewController performSelector:@selector(loadData)];
     }
-    NSLog(@"result %d",result);
+    NSLog(@"%@",item);
 }
 
 

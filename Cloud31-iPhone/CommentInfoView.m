@@ -18,12 +18,12 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        favorite = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"star_off.png"]];
-        favorite.frame=CGRectMake(202, 2, 20, 20);
+        favorite = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Favorite-Off.png"]];
+        favorite.frame=CGRectMake(198, 1, 20, 20);
         [self addSubview:favorite];
         
-        UIImageView *bubble = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"comment.png"]];
-        bubble.frame=CGRectMake(220, 1, 20, 20);
+        UIImageView *bubble = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Chat.png"]];
+        bubble.frame=CGRectMake(220, 0, 20, 20);
         [self addSubview:bubble];
         
         label= [[UILabel alloc] initWithFrame:CGRectMake(242, 0, 20, 20)];
@@ -49,6 +49,17 @@
 - (void)dealloc
 {
     [super dealloc];
+}
+
+
+-(void)setStarOn{
+    favorite.image=[UIImage imageNamed:@"Favorite.png"];
+}
+-(void)setStarOff{
+    favorite.image=[UIImage imageNamed:@"Favorite-Off.png"];
+}
+-(void)setCommentCount:(int)count{
+    label.text=[NSString stringWithFormat:@"%d",count];
 }
 
 @end

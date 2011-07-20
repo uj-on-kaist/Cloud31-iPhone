@@ -23,7 +23,7 @@
 -(void)setItems{
     UITabBarItem *home = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_home.png"] tag:0];
     UITabBarItem *company = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_company.png"] tag:1];
-    UITabBarItem *message = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_message.png"] tag:2];
+    UITabBarItem *message = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_message2.png"] tag:2];
     UITabBarItem *search = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_search.png"] tag:3];
     UITabBarItem *setting = [[UITabBarItem alloc] initWithTitle:@"" image:[UIImage imageNamed:@"tab_setting.png"] tag:4];
     

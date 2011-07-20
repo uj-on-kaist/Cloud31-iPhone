@@ -7,7 +7,8 @@
 //
 
 #import "RLViewController.h"
-
+#import "FeedDetailViewController.h"
+#import "Cloud31_iPhoneAppDelegate.h"
 
 @implementation RLViewController
 
@@ -154,14 +155,11 @@
 }
 
 - (NSDate*)egoRefreshTableHeaderDataSourceLastUpdated:(EGORefreshTableHeaderView*)view{
-	
 	return [NSDate date]; // should return date data source was last changed
-	
 }
 
 
 -(void)loadData{
-    NSLog(@"hihi");
     if([loadingView superview]){
         [loadingView removeFromSuperview];
     }
@@ -170,6 +168,18 @@
     }
     [_tableView reloadData];
     
+}
+
+-(void)loadMoreData:(int)base_id{
+    if(_load_more){
+        return;
+    }else{
+        _load_more=YES;
+    }    
+}
+-(void)loadMoreDataFinished:(int)result{
+    _load_more=NO;
+    [_tableView reloadData];
 }
 
 @end

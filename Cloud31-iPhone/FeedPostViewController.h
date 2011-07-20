@@ -8,11 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+#import "MBProgressHUD.h"
+
 
 @protocol FeedPostDelegate <NSObject>
 
 @required
--(void)feedUploaded:(int)result;
+-(void)feedUploaded:(NSMutableDictionary *)item;
 @end
 
 @interface FeedPostViewController : UIViewController <UIActionSheetDelegate> {
@@ -24,6 +26,8 @@
     IBOutlet UIButton *topicButton;
     IBOutlet UIButton *attachButton;
     IBOutlet UIButton *gpsButton;
+    
+    MBProgressHUD *HUD;
 }
 
 @property (nonatomic, retain) IBOutlet UIButton *atButton;
