@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
-#import "CommentInfoView.h"
+
+#import "Three20/Three20.h"
 
 @interface FeedTableViewCell : UITableViewCell <EGOImageViewDelegate>{
     EGOImageView *profileView;
@@ -17,9 +18,9 @@
     UILabel *contents_label;
     
     UILabel *date_label;
-    
-    CommentInfoView *comment_info;
-    
+    UILabel *comment_label;
+    UIImageView *favorite_image;
+    UIImageView *favorite_off_image;
     UIImageView *bgView;
 }
 

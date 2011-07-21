@@ -32,14 +32,13 @@
         
         [loadingView addSubview:activity];
         [loadingView addSubview:label];
-        loadingView.backgroundColor=BACKGROUND_COLOR;
+        //loadingView.backgroundColor=BACKGROUND_COLOR;
         [self.view addSubview:loadingView];
         
         _tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
         _tableView.delegate=self;
         _tableView.dataSource=self;
-        _tableView.backgroundColor=BACKGROUND_COLOR;
-        //[self.view addSubview:_tableView];
+        //_tableView.backgroundColor=BACKGROUND_COLOR;
         
         if (_refreshHeaderView == nil) {
             
@@ -72,11 +71,9 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    
     if([items count] == 0){
         if([loadingView superview] == nil)
             [self.view addSubview:loadingView];
-        
         [self performSelector:@selector(loadData)];
     }
 }
@@ -182,4 +179,21 @@
     [_tableView reloadData];
 }
 
+-(void)itemDeleted:(NSMutableDictionary *)item{
+    
+    int item_id=[[item objectForKey:@"id"] intValue];
+    NSMutableDictionary *willDeleted = nil;
+    for(NSMutableDictionary *_item in items){
+        int _item_id = [[_item objectForKey:@"id"] intValue];
+        if(item_id == _item_id){
+            willDeleted=_item;
+            break;
+        }
+    }
+    
+    if(willDeleted !=nil){
+        [items removeObject:willDeleted];
+    }
+    [self._tableView reloadData];
+}
 @end

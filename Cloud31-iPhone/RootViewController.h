@@ -16,9 +16,12 @@
 
 #import "FeedPostViewController.h"
 
-@class RootTabBar;
+
+#import "RootTabBar.h"
 
 @interface RootViewController : UIViewController <UITableViewDelegate, UITableViewDelegate, UITabBarDelegate, FeedPostDelegate> {
+    UIView *titleView;
+    
     IBOutlet RootTabBar *_tabBar;
     
     HomeViewController *homeViewController;

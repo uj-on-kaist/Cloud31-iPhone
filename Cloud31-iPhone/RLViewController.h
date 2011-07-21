@@ -36,4 +36,7 @@
 -(void)loadData;
 -(void)loadMoreData:(int)base_id;
 -(void)loadMoreDataFinished:(int)result;
+
+
+-(void)itemDeleted:(NSMutableDictionary *)item;
 @end

@@ -176,11 +176,9 @@
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    [cell setSelected:NO animated:YES];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSMutableDictionary *item = [items objectAtIndex:indexPath.row];
-    FeedDetailViewController *feedDetailViewController = [[FeedDetailViewController alloc] initWithItem:item];
+    FeedDetailViewController *feedDetailViewController = [[[FeedDetailViewController alloc] initWithItem:item] autorelease];
     Cloud31_iPhoneAppDelegate *app_delegate = (Cloud31_iPhoneAppDelegate *)[[UIApplication sharedApplication] delegate];
     [app_delegate.navigationController pushViewController:feedDetailViewController animated:YES];
 }

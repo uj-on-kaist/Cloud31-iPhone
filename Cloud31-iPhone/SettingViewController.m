@@ -13,6 +13,8 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "UserProfileSmallView.h"
+#import "Cloud31_iPhoneAppDelegate.h"
+#import "UserDetailViewController.h"
 
 @implementation SettingViewController
 
@@ -100,13 +102,19 @@
 
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if(indexPath.section == 2){
         [[UserInfoContainer sharedInfo] logout];
+    }else if(indexPath.section == 0){
+        UserDetailViewController *userDetailViewController =  [[UserDetailViewController alloc] initWithNibName:@"UserDetailViewController" bundle:nil withUserID:[[UserInfoContainer sharedInfo] userID]];
+        Cloud31_iPhoneAppDelegate *app_delegate = (Cloud31_iPhoneAppDelegate *)[[UIApplication sharedApplication] delegate];
+        [app_delegate.navigationController pushViewController:userDetailViewController animated:YES];
+        
+        if(indexPath.row == 1){
+            [userDetailViewController selectTab:3];
+        }
     }
-    
-    [cell setSelected:NO animated:YES];
 
 }
 

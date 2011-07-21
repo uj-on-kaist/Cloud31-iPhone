@@ -11,7 +11,6 @@
 #import "UserInfoContainer.h"
 #import "SignViewController.h"
 
-#import "RootTabBar.h"
 
 
 
@@ -23,14 +22,16 @@
 {
     
     [super viewDidLoad];
-    self.title=@"Main";
-    self.navigationItem.titleView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navi_logo.png"]];
-    self.navigationController.navigationBar.tintColor=RGB2(50, 90, 180);
+    
+    titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navi_logo.png"]];
+    self.navigationItem.titleView=nil;
+    self.title=@"My Feed";
+    //self.navigationController.navigationBar.tintColor=RGB2(50, 90, 180);
 
     //self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"My Feed" style:UIBarButtonItemStyleDone target:self action:@selector(changeFeedType)];
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeFeed)];
-    [_tabBar setItems];
+    
     
     CGRect frame = CGRectMake(0.0f, 0.0f, 320, 378);
     
@@ -46,9 +47,12 @@
     
     
     [self.view addSubview:currentViewController.view];
+    
     [currentViewController viewWillAppear:YES];
     
+    [_tabBar setItems];
     [self.view bringSubviewToFront:_tabBar];
+    
 }
 
 -(void)changeFeedType{
@@ -56,6 +60,12 @@
 }
 
 -(void)composeFeed{
+    if(currentViewController == messageViewController){
+        UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"In development" message:@"Send Message is in development. Use this feature on Website:)" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+        // optional - add more buttons:
+        [alert show];
+        return;
+    }
     FeedPostViewController *postController = [[FeedPostViewController alloc] init];
     postController.delegate=self;
     [self.navigationController presentModalViewController:postController animated:YES];
@@ -102,14 +112,24 @@
         [currentViewController.view removeFromSuperview];
     
     if(selectedIndex == HOME_INDEX){
+        self.navigationItem.titleView=nil;
+        self.title=@"My Feed";
         currentViewController=homeViewController;
     }else if(selectedIndex == COMPANY_INDEX){
+        self.navigationItem.titleView=nil;
+        self.title=@"Company Feed";
         currentViewController=companyViewController;
     }else if(selectedIndex == MESSAGE_INDEX){
+        self.navigationItem.titleView=nil;
+        self.title=@"Message";
         currentViewController=messageViewController;
     }else if(selectedIndex == SEARCH_INDEX){
+        self.title=@"Main";
+        self.navigationItem.titleView=titleView;
         currentViewController=searchViewController;
     }else if(selectedIndex == SETTING_INDEX){
+        self.title=@"Main";
+        self.navigationItem.titleView=titleView;
         currentViewController=settingViewController;
     }
     
@@ -121,4 +141,10 @@
     [currentViewController viewWillAppear:YES];
 }
 
+
+-(void)itemDeleted:(NSMutableDictionary *)item{
+    if([currentViewController respondsToSelector:@selector(itemDeleted:)]){
+        [currentViewController performSelector:@selector(itemDeleted:) withObject:item];
+    }
+}
 @end

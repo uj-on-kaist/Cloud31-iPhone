@@ -18,10 +18,10 @@
 
 #define BACKGROUND_COLOR RGB2(245, 245, 245)
 
-#define devURL @"http://localhost:8000"
+#define devURL @"http://175.203.71.73:8000"
 #define realURL @"http://cloud31.co.kr"
 
-#define ServiceURL @"http://175.203.71.73:8000"
+#define ServiceURL [NSString stringWithFormat:@"%@",devURL]
 
 #define LOGIN_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/login/"]
 #define LOGOUT_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/logout/"]
@@ -37,3 +37,27 @@
 #define MESSAGE_ALL_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/message/get/all/"]
 
 #define FEED_UPDATE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/feed/update/"]
+
+#define FEED_DELETE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/feed/delete/"]
+
+#define FEED_DETAIL_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/feed/get/"]
+#define COMMENT_UPDATE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/feed/comment/update/"]
+
+
+#define SEARCH_USER_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/search/user"]
+#define SEARCH_TOPIC_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/search/topic"]
+
+#define FILE_UPLOAD_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/file/upload"]
+
+#define DELETE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/delete/"]
+#define FAVOR_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/favor/"]
+#define UNFAVOR_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/unfavor/"]
+
+#define TOPIC_DETAIL_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/topic/detail/"]
+#define TOPIC_FEED_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/feed/topic/"]
+
+
+#define USER_DETAIL_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/user/detail/"]
+#define USER_FEED_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/user/"]
+#define USER_AT_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/user_at/"]
+#define USER_FAVORITE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/favorite/"]

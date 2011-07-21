@@ -10,6 +10,8 @@
 
 #import "MBProgressHUD.h"
 
+#import "EGOImageView.h"
+#import <MapKit/MapKit.h>
 
 @protocol FeedPostDelegate <NSObject>
 
@@ -17,7 +19,8 @@
 -(void)feedUploaded:(NSMutableDictionary *)item;
 @end
 
-@interface FeedPostViewController : UIViewController <UIActionSheetDelegate> {
+
+@interface FeedPostViewController : UIViewController <UIActionSheetDelegate, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate, MKMapViewDelegate> {
     IBOutlet UILabel *userLabel;
     IBOutlet UITextView *inputView;
     id<FeedPostDelegate> delegate;
@@ -27,7 +30,23 @@
     IBOutlet UIButton *attachButton;
     IBOutlet UIButton *gpsButton;
     
+    UIControl *inputBGView;
+    IBOutlet UIView *attachView;
+    IBOutlet UIView *gpsView;
+    
     MBProgressHUD *HUD;
+    
+    UITableView *autoTableView;
+    NSMutableArray *autoArray;
+    
+    BOOL search_user;
+    BOOL search_topic;
+    
+    UIImagePickerController *imagePickerController;
+    
+    NSString *attach_list;
+    
+    NSString *location_info;
 }
 
 @property (nonatomic, retain) IBOutlet UIButton *atButton;
@@ -35,9 +54,23 @@
 @property (nonatomic, retain) IBOutlet UIButton *attachButton;
 @property (nonatomic, retain) IBOutlet UIButton *gpsButton;
 
+@property (nonatomic, retain) IBOutlet UIView *attachView;
+@property (nonatomic, retain) IBOutlet UIView *gpsView;
 @property (nonatomic, retain) IBOutlet UILabel *userLabel;
 @property (nonatomic, retain) IBOutlet UITextView *inputView;
 @property(nonatomic,retain) id<FeedPostDelegate> delegate;
+
+@property (nonatomic, retain) NSString *attach_list;
+@property (nonatomic, retain) NSString *location_info;
 -(IBAction)cancel;
 
+-(void)makeSmallInputView;
+-(void)makeOriginalInputView;
+
+-(void)detectUser:(NSString *)query;
+-(void)detectTopic:(NSString *)query;
+
+-(NSString*) stringWithUUID;
+
+-(void)setMarker:(MKCoordinateRegion)newRegion inMapView:(MKMapView *)mapView;
 @end

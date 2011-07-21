@@ -8,6 +8,8 @@
 	<string>Cloud31</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFile</key>
+	<string>Icon.jpg</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.samil.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -26,17 +28,15 @@
 	<true/>
 	<key>NSMainNibFile</key>
 	<string>MainWindow</string>
+	<key>UILaunchImageFile</key>
+	<string>launch.jpg</string>
+	<key>UIPrerenderedIcon</key>
+	<true/>
+	<key>UIStatusBarHidden</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UILaunchImageFile</key>
-	<string>launch.jpg</string>
-	<key>CFBundleIconFile</key>
-	<string>Icon.jpg</string>
-	<key>UIStatusBarHidden</key>
-	<true/>
 </dict>
 </plist>

@@ -12,6 +12,7 @@
 #import "EGOImageView.h"
 #import "UserPictureContainer.h"
 
+
 @implementation FeedTableViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -21,11 +22,8 @@
         UIView *border = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 1)];
         border.backgroundColor=[UIColor whiteColor];
         [self addSubview:border];
-        self.contentView.backgroundColor=RGB2(245, 245, 245);
-//        bgView= [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"CellGradientBackground.png"]];
-//        bgView.backgroundColor=[UIColor whiteColor];
-//        bgView.frame=CGRectMake(0, 0, 320, 43);
-//        [self addSubview:bgView];
+        //self.contentView.backgroundColor=RGB2(245, 245, 245);
+
         
         profileView = [[EGOImageView alloc] initWithPlaceholderImage:[UIImage imageNamed:@"default.png"]];
         profileView.frame= CGRectMake(10, 10, 60, 60);
@@ -41,7 +39,7 @@
         author_label.backgroundColor=[UIColor clearColor];
         [self addSubview:author_label];
         
-        contents_label = [[UILabel alloc] initWithFrame:CGRectMake(57, 20, 250, 0)];
+        contents_label = [[UILabel alloc] initWithFrame:CGRectMake(57, 25, 250, 0)];
         contents_label.numberOfLines=0;
         contents_label.text=@"author";
         contents_label.font=[UIFont systemFontOfSize:14.0f];
@@ -49,20 +47,36 @@
         contents_label.backgroundColor=[UIColor clearColor];
         [self addSubview:contents_label];
         
-        date_label = [[UILabel alloc] initWithFrame:CGRectMake(210, 5, 100, 15)];
+        date_label = [[UILabel alloc] initWithFrame:CGRectMake(57, 5, 100, 15)];
         date_label.text=@"date";
-        date_label.textAlignment=UITextAlignmentRight;
+        date_label.textAlignment=UITextAlignmentLeft;
         date_label.textColor=[UIColor darkGrayColor];
         date_label.backgroundColor=[UIColor clearColor];
         date_label.font=[UIFont systemFontOfSize:12.0f];
-        
-        comment_info = [[CommentInfoView alloc] initWithFrame:CGRectMake(57, 5, 260, 20)];
-        comment_info.backgroundColor=[UIColor clearColor];
-        [self addSubview:comment_info];
+
         
         [self addSubview:date_label];
         
-        //self.selectionStyle=UITableViewCellSelectionStyleGray;
+        comment_label = [[UILabel alloc] initWithFrame:CGRectMake(57, 5, 100, 15)];
+        comment_label.text=@"";
+        comment_label.textAlignment=UITextAlignmentLeft;
+        comment_label.textColor=[UIColor darkGrayColor];
+        comment_label.backgroundColor=[UIColor clearColor];
+        comment_label.font=[UIFont systemFontOfSize:12.0f];
+        [self addSubview:comment_label];
+        
+        favorite_image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Favorite.png"]];
+        favorite_image.frame=CGRectMake(57, 5, 22, 22);
+        favorite_image.backgroundColor=[UIColor clearColor];
+        [self addSubview:favorite_image];
+        
+        favorite_off_image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Favorite-Off.png"]];
+        favorite_off_image.frame=CGRectMake(57, 5, 22, 22);
+        favorite_off_image.backgroundColor=[UIColor clearColor];
+        [self addSubview:favorite_off_image];
+        
+        self.selectionStyle=UITableViewCellSelectionStyleNone;
+        
     }
     return self;
 }
@@ -81,27 +95,52 @@
 
 -(void)prepareData:(NSMutableDictionary *)item{
     author_label.text=[item objectForKey:@"author"];
-    //self.selectionStyle=UITableViewCellSelectionStyleNone;
-    date_label.text=[item objectForKey:@"pretty_date"];
+    NSString *url=[NSString stringWithFormat:@"%@%@",ServiceURL,[item objectForKey:@"author_picture"]];
+    [profileView setImageURL:[NSURL URLWithString:url]];
+    
+    date_label.text=[NSString stringWithFormat:@"%@  |",[item objectForKey:@"pretty_date"]];
     contents_label.text=[item objectForKey:@"contents_original"];
     CGRect frame = contents_label.frame;
     frame.size.height = [[item objectForKey:@"contents_original"] sizeWithFont:[UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(250, 1000) lineBreakMode:UILineBreakModeCharacterWrap].height;
     contents_label.frame=frame;
+
     
-    frame = comment_info.frame;
-    frame.origin.y = contents_label.frame.origin.y + contents_label.frame.size.height+5;
-    comment_info.frame= frame;
+    frame = date_label.frame;
+    frame.origin.x = 57;
+    frame.origin.y = contents_label.frame.origin.y + contents_label.frame.size.height+10;
+    CGSize suggestedSize= [date_label.text sizeWithFont:date_label.font constrainedToSize:CGSizeMake(100, 15) lineBreakMode:UILineBreakModeWordWrap];
+    frame.size.width=suggestedSize.width;
+    date_label.frame= frame;
     
-    NSString *url=[NSString stringWithFormat:@"%@%@",ServiceURL,[item objectForKey:@"author_picture"]];
-    [profileView setImageURL:[NSURL URLWithString:url]];
+    comment_label.text=[NSString stringWithFormat:@"|  %d comments", [[item objectForKey:@"comments"] count]];
+    frame = comment_label.frame;
+    frame.origin.y = date_label.frame.origin.y;
+    frame.origin.x = date_label.frame.origin.x + date_label.frame.size.width+25;
+    comment_label.frame= frame;
+    
+    frame = favorite_image.frame;
+    frame.origin.y = date_label.frame.origin.y-3;
+    frame.origin.x = date_label.frame.origin.x + date_label.frame.size.width+1;
+    favorite_image.frame = frame;
+    favorite_off_image.frame = frame;
     if([[item objectForKey:@"favorite"] boolValue]){
-        [comment_info setStarOn];
+        favorite_image.hidden=NO; favorite_off_image.hidden=YES;
     }else{
-        [comment_info setStarOff];
+        favorite_off_image.hidden=NO; favorite_image.hidden=YES;
     }
-    
-    int comment_count = [[item objectForKey:@"comments"] count];
-    [comment_info setCommentCount:comment_count];
+//    if([[item objectForKey:@"favorite"] boolValue]){
+//        [comment_info setStarOn];
+//    }else{
+//        [comment_info setStarOff];
+//    }
+//    BOOL has_location=NO;
+//    if([item objectForKey:@"lat"] != nil && [item objectForKey:@"lng"] != nil){
+//        has_location=YES;
+//    }
+//    [comment_info setAttachInfo:[item objectForKey:@"file_list"] withLocation:has_location];
+//    
+//    int comment_count = [[item objectForKey:@"comments"] count];
+//    [comment_info setCommentCount:comment_count];
 //    bgView.frame=CGRectMake(0, 0, 320, contents_label.frame.size.height+50);
     
 }
@@ -109,7 +148,7 @@
 +(CGFloat)calculateHeight:(NSMutableDictionary *)item{
     CGSize suggestedSize = [[item objectForKey:@"contents_original"] sizeWithFont:[UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(250, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
     [item setValue:[NSNumber numberWithFloat:suggestedSize.height+50] forKey:@"height"];
-    return MAX(suggestedSize.height+50, 60.0f);
+    return MAX(suggestedSize.height+55, 60.0f);
 }
 
 @end

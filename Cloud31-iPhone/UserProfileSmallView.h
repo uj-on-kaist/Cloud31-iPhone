@@ -10,15 +10,19 @@
 #import "EGOImageView.h"
 
 
-@interface UserProfileSmallView : UIView {
+@interface UserProfileSmallView : UIControl {
     UILabel *name;
     UILabel *userID;
     UILabel *userDept;
     EGOImageView *picture;
+    
+    UIImageView *discloure;
 }
 @property (nonatomic,retain) EGOImageView *picture;
 @property (nonatomic,retain) UILabel *name;
 @property (nonatomic,retain) UILabel *userID;
 @property (nonatomic,retain) UILabel *userDept;
 
+
+-(void)disableLink;
 @end

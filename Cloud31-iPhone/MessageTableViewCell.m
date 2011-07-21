@@ -18,11 +18,6 @@
         UIView *border = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 1)];
         border.backgroundColor=[UIColor whiteColor];
         [self addSubview:border];
-        self.contentView.backgroundColor=RGB2(245, 245, 245);
-        //        bgView= [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"CellGradientBackground.png"]];
-        //        bgView.backgroundColor=[UIColor whiteColor];
-        //        bgView.frame=CGRectMake(0, 0, 320, 43);
-        //        [self addSubview:bgView];
         
         profileView = [[EGOImageView alloc] initWithPlaceholderImage:[UIImage imageNamed:@"default.png"]];
         profileView.frame= CGRectMake(10, 10, 60, 60);
@@ -55,7 +50,7 @@
 
         [self addSubview:date_label];
         
-        self.selectionStyle=UITableViewCellSelectionStyleGray;
+        self.selectionStyle=UITableViewCellSelectionStyleNone;
     }
     return self;
 }
@@ -73,7 +68,7 @@
 }
 
 -(void)prepareData:(NSMutableDictionary *)item{
-    member_label.text=[item objectForKey:@"receivers"];
+    member_label.text=[NSString stringWithFormat:@"%@ → %@",[item objectForKey:@"author"],[item objectForKey:@"receivers"]];
     //self.selectionStyle=UITableViewCellSelectionStyleNone;
     date_label.text=[item objectForKey:@"pretty_date"];
     contents_label.text=[item objectForKey:@"latest_reply"];

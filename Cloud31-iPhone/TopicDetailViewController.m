@@ -1,21 +1,44 @@
 //
-//  FeedViewController.m
+//  TopicDetailViewController.m
 //  Cloud31-iPhone
 //
-//  Created by 정의준 on 11. 7. 18..
+//  Created by 정의준 on 11. 7. 21..
 //  Copyright 2011 KAIST. All rights reserved.
 //
 
-#import "CompanyViewController.h"
+#import "TopicDetailViewController.h"
+#import "FeedDetailViewController.h"
+#import "UserProfileSmallView.h"
+
+#import "Cloud31_iPhoneAppDelegate.h"
+
+#import "CommentTableViewCell.h"
+
+#import "CommentPostController.h"
 
 #import "ASIHTTPRequest.h"
 #import "Extensions/NSDictionary_JSONExtensions.h"
 
-#import "FeedTableViewCell.h"
-#import "FeedDetailViewController.h"
-#import "Cloud31_iPhoneAppDelegate.h"
+#import "CommentInfoView.h"
+#import "UserInfoContainer.h"
 
-@implementation CompanyViewController
+#import "FeedTableViewCell.h"
+
+@implementation TopicDetailViewController
+
+@synthesize topic_id, topic_info;
+
+-(id)initWithTopicID:(NSString *)a_id{
+    self = [super initWithFrame:CGRectMake(0, 0, 320, 417)];
+    if (self) {
+        // Custom initialization
+        self.topic_id = a_id;
+        
+        
+        
+    }
+    return self;
+}
 
 - (void)dealloc
 {
@@ -30,66 +53,43 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-#pragma mark - View lifecycle
 
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView
-{
-}
-*/
-
-
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.title=@"Main";
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
-- (void)reloadTableViewDataSource{
-	
-	//  should be calling your tableviews data source model to reload
-	//  put here just for demo
-	_reloading = YES;
-	[self performSelector:@selector(loadData) withObject:nil afterDelay:0.1];
-}
-
-- (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view{
-	
-	[self reloadTableViewDataSource];
-    [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0.5];
-	
-}
 
 -(void)loadData{
-    NSLog(@"Load data");
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:COMPANY_FEED_URL]];
+    if(topic_info == nil){
+        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",TOPIC_DETAIL_URL,topic_id]]];
+        [request startSynchronous];
+        NSError *error = [request error];
+        if (!error) {
+            NSString *response = [request responseString];
+            NSError *theError = NULL;
+            NSDictionary *json = [NSDictionary dictionaryWithJSONString:response error:&theError];
+            if([[json objectForKey:@"success"] isEqualToNumber:[NSNumber numberWithInt:1]]){
+                self.topic_info =[NSMutableDictionary dictionaryWithDictionary:[json objectForKey:@"topic"]];
+                self.title=[NSString stringWithFormat:@"#%@",[topic_info objectForKey:@"topic_name"]];
+            }else{
+                Cloud31_iPhoneAppDelegate *app_delegate = (Cloud31_iPhoneAppDelegate *)[[UIApplication sharedApplication] delegate];
+                [app_delegate.navigationController popViewControllerAnimated:YES];
+            }
+        }else{
+            Cloud31_iPhoneAppDelegate *app_delegate = (Cloud31_iPhoneAppDelegate *)[[UIApplication sharedApplication] delegate];
+            [app_delegate.navigationController popViewControllerAnimated:YES];
+        }
+    }
+    NSLog(@"Request Start");
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@/",TOPIC_FEED_URL,topic_id]]];
+    _data_loading=YES;
     [request setDelegate:self];
     [request startAsynchronous];
-    _data_loading=YES;
 }
-
 -(void)loadMoreData:(int)base_id{
     [super loadMoreData:base_id];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?base_id=%d",COMPANY_FEED_URL, base_id]]];
+    NSString *url = [NSString stringWithFormat:@"%@%@/?base_id=%d",TOPIC_FEED_URL,topic_id, base_id];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
     [request setDelegate:self];
-    _data_loading=NO;
     [request startAsynchronous];
 }
+
 - (void)requestFinished:(ASIHTTPRequest *)request
 {
     if(_data_loading){
@@ -112,7 +112,6 @@
         _data_loading=NO;
         [super loadData];
     }else{
-        // Use when fetching text data
         NSString *response = [request responseString];
         //NSLog(@"%@",response);
         NSError *theError = NULL;
@@ -135,16 +134,59 @@
 
 - (void)requestFailed:(ASIHTTPRequest *)request
 {
-    if(_data_loading){
-    
-    }else{
-        NSError *error = [request error];
-        NSLog(@"%@",[error localizedDescription]);
-        [items removeLastObject];
-        [super loadMoreDataFinished:0];
-    }
+    NSError *error = [request error];
+    NSLog(@"%@",[error localizedDescription]);
+    //Cloud31_iPhoneAppDelegate *app_delegate = (Cloud31_iPhoneAppDelegate *)[[UIApplication sharedApplication] delegate];
+    //[app_delegate.navigationController popViewControllerAnimated:YES];
 }
 
+
+
+#pragma mark - View lifecycle
+
+/*
+// Implement loadView to create a view hierarchy programmatically, without using a nib.
+- (void)loadView
+{
+}
+*/
+
+/*
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+}
+*/
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    // Release any retained subviews of the main view.
+    // e.g. self.myOutlet = nil;
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    // Return YES for supported orientations
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
+- (void)reloadTableViewDataSource{
+	
+	//  should be calling your tableviews data source model to reload
+	//  put here just for demo
+	_reloading = YES;
+	[self performSelector:@selector(loadData) withObject:nil afterDelay:0.1];
+}
+
+- (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view{
+	
+	[self reloadTableViewDataSource];
+    [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0.5];
+	
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -163,7 +205,8 @@
         [load_cell addSubview:activity];
         
         NSMutableDictionary *last_item = [items objectAtIndex:([items count] - 2)];
-        [self loadMoreData:[[last_item objectForKey:@"base_id"] intValue]];
+        int base_id = [[last_item objectForKey:@"base_id"] intValue];
+        [self loadMoreData:base_id];
         return load_cell;
     }
     [cell prepareData:item];
@@ -193,7 +236,7 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSMutableDictionary *item = [items objectAtIndex:indexPath.row];
-    FeedDetailViewController *feedDetailViewController = [[[FeedDetailViewController alloc] initWithItem:item] autorelease];
+    FeedDetailViewController *feedDetailViewController = [[FeedDetailViewController alloc] initWithItem:item];
     Cloud31_iPhoneAppDelegate *app_delegate = (Cloud31_iPhoneAppDelegate *)[[UIApplication sharedApplication] delegate];
     [app_delegate.navigationController pushViewController:feedDetailViewController animated:YES];
 }
