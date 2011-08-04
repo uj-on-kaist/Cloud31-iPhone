@@ -36,10 +36,16 @@
     //22
     bubble.frame=CGRectMake(22,-8, 19, 10);
     [self addSubview:bubble];
+    
+    
+    [self updateCount];
 }
 
+int startPosition = 22;
+int distance = 64;
+
 -(void)tabbarSelected:(int)index{
-    int position = 64*index+22;
+    int position = distance*index+startPosition;
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:0.2];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
@@ -51,6 +57,29 @@
     
     // Commit the changes
     [UIView commitAnimations];
+}
+
+-(void)updateCount{
+    UITabBarItem *setting = (UITabBarItem *)[[self items] objectAtIndex:4];
+    
+    NSInteger badge = [[UIApplication sharedApplication] applicationIconBadgeNumber];
+    if(badge == 0){
+        [setting setBadgeValue:nil];
+    }else{
+        [setting setBadgeValue:[NSString stringWithFormat:@"%d",badge]];
+    }
+    
+}
+
+-(void)updateTrianglePosition{
+    UIDeviceOrientation deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    if(deviceOrientation == UIDeviceOrientationLandscapeLeft || deviceOrientation == UIDeviceOrientationLandscapeRight ){
+        startPosition = 38; distance = 96;
+    }else{
+        startPosition = 22; distance = 64;
+    }
+    
+    [self tabbarSelected:[[self selectedItem] tag]];
 }
 
 @end

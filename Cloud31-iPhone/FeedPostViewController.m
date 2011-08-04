@@ -16,7 +16,7 @@
 #import "Extensions/NSDictionary_JSONExtensions.h"
 
 #import "CustomMapView.h"
-
+#import "CustomUIControl.h"
 
 @implementation FeedPostViewController
 
@@ -24,7 +24,7 @@
 @synthesize delegate;
 @synthesize atButton, topicButton, attachButton, gpsButton;
 @synthesize attachView,gpsView, attach_list, location_info;
-
+@synthesize imageScrollView, gpsMapView, locationManager;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -61,7 +61,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    imageScrollView.layer.cornerRadius=10.0f;
+
     [self.view addSubview:attachView];
     [self.view addSubview:gpsView];
     
@@ -96,6 +97,43 @@
     
     [self.view bringSubviewToFront:inputView];
 }
+
+-(void)viewWillAppear:(BOOL)animated{
+
+    [super viewWillAppear:animated];
+    
+    if(locationManager == nil){
+        self.locationManager = [[CLLocationManager alloc] init];
+        locationManager.delegate = self;
+    }
+    
+    locationFirst=NO;
+}
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
+    
+    MKCoordinateRegion newRegion;
+    newRegion.center.latitude = newLocation.coordinate.latitude;
+    newRegion.center.longitude = newLocation.coordinate.longitude;
+    newRegion.span.latitudeDelta = 0.006878;
+    newRegion.span.longitudeDelta = 0.013335;
+    [gpsMapView setRegion:newRegion animated:YES];
+    
+    [manager stopUpdatingLocation];
+    
+    [self setMarker:newRegion inMapView:gpsMapView];
+}
+-(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error{
+    
+    MKCoordinateRegion newRegion;//37.528068,126.967691
+    newRegion.center.latitude = 37.528068;
+    newRegion.center.longitude = 126.967691;
+    newRegion.span.latitudeDelta = 0.006878;
+    newRegion.span.longitudeDelta = 0.013335;
+    [gpsMapView setRegion:newRegion animated:YES];
+    
+    [self setMarker:newRegion inMapView:gpsMapView];
+}
+
 
 - (void)viewDidUnload
 {
@@ -137,22 +175,31 @@
     if([inputView isFirstResponder]){
         [inputView resignFirstResponder];
     }
-
-    HUD = [[MBProgressHUD alloc] initWithView:self.view];
-	
+    
+    if(HUD == nil){
+        HUD = [[MBProgressHUD alloc] initWithView:self.view];
+        [self.view addSubview:HUD];
+    }
     HUD.labelText = @"Updating...";
-    
-    [self.view addSubview:HUD];
-    
     [HUD show:YES];
     [self performSelector:@selector(updatePost) withObject:nil afterDelay:0.25f];
 }
 
 -(void)updatePost{
+    NSString *attach = @"";
+    for(id object in [imageScrollView subviews]){
+        if([object isKindOfClass:[CustomUIControl class]]){
+            if([(CustomUIControl *)object isHidden]){
+                continue;
+            }
+            attach = [attach stringByAppendingFormat:@"%@.",[(CustomUIControl *)object attach_id]];
+        }
+    }
+    
     
     ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:FEED_UPDATE_URL]];
     [request setPostValue:[inputView text] forKey:@"message"];
-    [request setPostValue:self.attach_list forKey:@"attach_list"];
+    [request setPostValue:attach forKey:@"attach_list"];
     [request setPostValue:self.location_info forKey:@"location_info"];
     [request startSynchronous];
     NSError *error = [request error];
@@ -170,20 +217,15 @@
             }
             
         }else{
-            [HUD hide:NO];
-            HUD.labelText = @"Error Occured";
-            [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+            [self showErrorHUD:nil];
         }
         
     }else{
-        HUD.labelText = @"Error Occured";
-        [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+        [self showErrorHUD:error];
         NSLog(@"%@",[error localizedDescription]);
     }
 }
--(void)myTask {
-    sleep(1);
-}
+
 //- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
 //    NSLog(@"hi %@",text);
 //    if ([text isEqualToString:@"@"]){
@@ -352,11 +394,18 @@
         [inputView resignFirstResponder];
     }
     
+    if(!locationFirst){
+        [locationManager startUpdatingLocation];
+        locationFirst=YES;
+    }
+    
     attachView.hidden=YES;
     gpsView.hidden=NO;
 }
 
-
+-(IBAction)removeGPS{
+    [gpsMapView removeAnnotations:[gpsMapView annotations]];
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [autoArray count];
@@ -453,8 +502,9 @@
         HUD = [[MBProgressHUD alloc] initWithView:self.view];
         [self.view addSubview:HUD];
     }
-    
+
     HUD.labelText = @"Uploading...";
+    HUD.detailsLabelText = @"";
     [HUD show:YES];
     [self performSelector:@selector(updateImage:) withObject:img afterDelay:0.25f];
 
@@ -476,14 +526,59 @@
             if(!theError && [[json objectForKey:@"success"] isEqualToNumber:[NSNumber numberWithInt:1]]){
                 NSString *file_id=[[json objectForKey:@"file_id"] stringValue];
                 self.attach_list=[NSString stringWithFormat:@"%@%@.",self.attach_list,file_id];
+                [HUD hide:YES];
+                
+                UIImageView *imageView = [[UIImageView alloc] initWithImage:img];
+                
+                CGFloat scaleFactor = 140.0f/img.size.height;
+                CGFloat offsetX = imageScrollView.contentSize.width;
+                if(offsetX == 0){
+                    offsetX = 0;
+                }
+                imageView.layer.cornerRadius=5.0f;
+                imageView.frame=CGRectMake(offsetX+10, 10, img.size.width * scaleFactor, img.size.height * scaleFactor);
+                [imageScrollView addSubview:imageView];
+                CGSize size = imageScrollView.contentSize;
+                [imageScrollView setContentSize:CGSizeMake(size.width+imageView.frame.size.width+20, imageScrollView.frame.size.height)];
+                
+                CustomUIControl *control = [[CustomUIControl alloc] initWithFrame:imageView.frame];
+                control.parentScrollView=imageScrollView;
+                control.imageView=imageView;
+                control.attach_id=[[json objectForKey:@"file_id"] stringValue];
+                NSLog(@"%@",control.attach_id);
+                [control addTarget:control action:@selector(deleteSelf) forControlEvents:UIControlEventTouchUpInside];
+                [imageScrollView addSubview:control];
+                
+                size = imageScrollView.contentSize;
+                [imageScrollView scrollRectToVisible:CGRectMake(size.width-10, 0, 10, 10) animated:YES];
+            }else if(theError){
+                [self showErrorHUD:theError];
+            }else{
+                [self showErrorHUD:nil];
             }
         }else{
             NSLog(@"Error : %@", [error localizedDescription]);
+            [self showErrorHUD:error];
         }
     }else{
         NSLog(@"NULL %@", img);
     }
-    [HUD hide:YES];
+    
+}
+
+-(void)showErrorHUD:(NSError *)error{
+    [HUD hide:NO];
+    if(errorHUD == nil){
+        errorHUD = [[MBProgressHUD alloc] initWithView:self.view];
+        [self.view addSubview:errorHUD];
+        errorHUD.customView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"errorHUD.png"]] autorelease];
+        errorHUD.mode = MBProgressHUDModeCustomView;
+        errorHUD.labelText = @"Error Occurred";
+    }
+    [errorHUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+}
+-(void)myTask {
+    sleep(1);
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
@@ -500,27 +595,7 @@
 }
 
 
-- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation{
-    NSLog(@"%@", userLocation);
-    
-    MKCoordinateRegion newRegion;
-    newRegion.center.latitude = userLocation.location.coordinate.latitude;
-    newRegion.center.longitude = userLocation.location.coordinate.longitude;
-    newRegion.span.latitudeDelta = 0.006878;
-    newRegion.span.longitudeDelta = 0.013335;
-    [mapView setRegion:newRegion animated:YES];
-}
 
-- (void)mapView:(MKMapView *)mapView didFailToLocateUserWithError:(NSError *)error{
-    NSLog(@"%@",[error localizedDescription]);
-    
-    MKCoordinateRegion newRegion;//37.528068,126.967691
-    newRegion.center.latitude = 37.528068;
-    newRegion.center.longitude = 126.967691;
-    newRegion.span.latitudeDelta = 0.006878;
-    newRegion.span.longitudeDelta = 0.013335;
-    [mapView setRegion:newRegion animated:YES];
-}
 
 -(void)setMarker:(MKCoordinateRegion)newRegion inMapView:(MKMapView *)mapView{
     MapMarker *mapMarker=[[MapMarker alloc] init];

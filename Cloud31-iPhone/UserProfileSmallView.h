@@ -25,4 +25,5 @@
 
 
 -(void)disableLink;
+-(void)scrollBackgroundColorSet;
 @end

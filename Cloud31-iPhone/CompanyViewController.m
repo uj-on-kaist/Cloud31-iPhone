@@ -15,6 +15,8 @@
 #import "FeedDetailViewController.h"
 #import "Cloud31_iPhoneAppDelegate.h"
 
+#import "UserInfoContainer.h"
+
 @implementation CompanyViewController
 
 - (void)dealloc
@@ -57,7 +59,7 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
 }
 
 - (void)reloadTableViewDataSource{
@@ -71,13 +73,13 @@
 - (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view{
 	
 	[self reloadTableViewDataSource];
-    [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0.5];
 	
 }
 
 -(void)loadData{
     NSLog(@"Load data");
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:COMPANY_FEED_URL]];
+    NSString *sort_type=[[UserInfoContainer sharedInfo] getSortType];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?sort=%@",COMPANY_FEED_URL, sort_type]]];
     [request setDelegate:self];
     [request startAsynchronous];
     _data_loading=YES;
@@ -85,7 +87,8 @@
 
 -(void)loadMoreData:(int)base_id{
     [super loadMoreData:base_id];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?base_id=%d",COMPANY_FEED_URL, base_id]]];
+    NSString *sort_type=[[UserInfoContainer sharedInfo] getSortType];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?base_id=%d&sort=%@",COMPANY_FEED_URL, base_id,sort_type]]];
     [request setDelegate:self];
     _data_loading=NO;
     [request startAsynchronous];
@@ -136,7 +139,8 @@
 - (void)requestFailed:(ASIHTTPRequest *)request
 {
     if(_data_loading){
-    
+        _data_loading=NO;
+        [super loadData];
     }else{
         NSError *error = [request error];
         NSLog(@"%@",[error localizedDescription]);
@@ -179,13 +183,9 @@
         if([[item objectForKey:@"load_more"] isEqualToString:@"true"]){
             return 44.0f;
         }
-        if([item valueForKey:@"height"]){
-            return [[item valueForKey:@"height"] floatValue];
-        }else{
-            CGFloat height = [FeedTableViewCell calculateHeight:item];
-            [item setValue:[NSNumber numberWithFloat:height] forKey:@"height"];
-            return height;
-        }        
+        CGFloat height = [FeedTableViewCell calculateHeight:item];
+        [item setValue:[NSNumber numberWithFloat:height] forKey:@"height"];
+        return height;       
     }
     return 44.0f;
 }

@@ -11,11 +11,13 @@
 
 #import "Three20/Three20.h"
 #import "MBProgressHUD.h"
+#import "ImageListView.h"
+#import <MapKit/MapKit.h>
 
 @class  CommentInfoView;
-@interface FeedDetailViewController : RLViewController<TTNavigatorDelegate, TTPostControllerDelegate, UIActionSheetDelegate> {
+@interface FeedDetailViewController : RLViewController<TTNavigatorDelegate, TTPostControllerDelegate, UIActionSheetDelegate, MKMapViewDelegate, UIWebViewDelegate> {
     NSMutableDictionary *item;
-    TTStyledTextLabel *contents_label;
+    UIWebView *contents_label;
     NSMutableArray *comments;
     
     BOOL from_comment_update;
@@ -24,6 +26,16 @@
     
     MBProgressHUD *HUD;
     
+    
+    ImageListView *imageListView;
+    
+    MKMapView *mapView;
+    
+    
+    UIWebView *content_view;
+    UIButton *commentPostView;
+    
+    ASIHTTPRequest *request;
 }
 
 @property (nonatomic, retain) NSMutableDictionary *item;
@@ -32,5 +44,7 @@
 -(void)reloadData;
 -(void)showTopicDetailController:(NSString *)query;
 -(void)showUserDetailController:(NSString *)query;
+
+-(void)loadRestData;
 
 @end

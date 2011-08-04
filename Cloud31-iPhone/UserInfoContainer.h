@@ -26,4 +26,9 @@
 -(BOOL)checkLogin;
 
 -(void)logout;
+
+
+-(NSString *)getSortType;
+-(void)setSortType:(NSString *)type;
+
 @end

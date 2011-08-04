@@ -15,7 +15,9 @@
 @implementation CommentPostController
 
 @synthesize feed_id;
-
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    return YES;
+}
 -(void)viewDidLoad{
     [super viewDidLoad];
     self.title=@"New Comment";

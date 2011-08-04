@@ -30,12 +30,7 @@ static UserPictureContainer *sharedInfo = NULL;
 }
 
 -(void)addUserImage:(UIImage *)image withURL:(NSString *)url{
-    UIGraphicsBeginImageContext(CGSizeMake(45.0f, 45.0f));
-    [image drawInRect:CGRectMake(0, 0, 45.0f, 45.0f)];
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();    
-    UIGraphicsEndImageContext();
-    
-    [self.container setObject:newImage forKey:url];
+    [self.container setObject:image forKey:url];
 }
 
 @end

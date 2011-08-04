@@ -22,6 +22,6 @@
 -(void)tabbarSelected:(int)index;
 
 -(void)selectItem:(int)index;
-
+-(void)updateTrianglePosition;
 @end
 

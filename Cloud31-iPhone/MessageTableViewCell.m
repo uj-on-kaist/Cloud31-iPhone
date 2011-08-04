@@ -28,7 +28,7 @@
         member_label = [[UILabel alloc] initWithFrame:CGRectMake(57, 5, 160, 15)];
         member_label.text=@"author";
         member_label.font=[UIFont boldSystemFontOfSize:14.0f];
-        member_label.textColor=[UIColor darkTextColor];
+        member_label.textColor=RGB2(52, 90, 180);
         member_label.backgroundColor=[UIColor clearColor];
         [self addSubview:member_label];
         
@@ -39,6 +39,7 @@
         contents_label.lineBreakMode=UILineBreakModeWordWrap;
         contents_label.backgroundColor=[UIColor clearColor];
         contents_label.textColor=[UIColor darkGrayColor];
+        contents_label.autoresizingMask=UIViewAutoresizingFlexibleWidth;
         [self addSubview:contents_label];
         
         date_label = [[UILabel alloc] initWithFrame:CGRectMake(210, 5, 100, 15)];
@@ -47,10 +48,19 @@
         date_label.textColor=[UIColor darkGrayColor];
         date_label.backgroundColor=[UIColor clearColor];
         date_label.font=[UIFont systemFontOfSize:12.0f];
-
+        date_label.autoresizingMask=UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
         [self addSubview:date_label];
         
-        self.selectionStyle=UITableViewCellSelectionStyleNone;
+        //self.selectionStyle=UITableViewCellSelectionStyleNone;
+        
+        UIImageView *profile_frame =  [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"profile_frame.png"]];
+        profile_frame.frame = CGRectMake(4, 4, 48, 46);
+        profile_frame.backgroundColor=[UIColor clearColor];
+        [self addSubview:profile_frame];
+        
+        UIView *smallFix = [[UIView alloc] initWithFrame:CGRectMake(5, 49, 1, 1)];
+        smallFix.backgroundColor=[UIColor whiteColor];
+        [self addSubview:smallFix];
     }
     return self;
 }
@@ -68,7 +78,8 @@
 }
 
 -(void)prepareData:(NSMutableDictionary *)item{
-    member_label.text=[NSString stringWithFormat:@"%@ → %@",[item objectForKey:@"author"],[item objectForKey:@"receivers"]];
+    //member_label.text=[NSString stringWithFormat:@"%@",[item objectForKey:@"receivers_name"]];
+    member_label.text=[NSString stringWithFormat:@"%@ → %@",[item objectForKey:@"author_name"] ,[item objectForKey:@"receivers_name"]];
     //self.selectionStyle=UITableViewCellSelectionStyleNone;
     date_label.text=[item objectForKey:@"pretty_date"];
     contents_label.text=[item objectForKey:@"latest_reply"];

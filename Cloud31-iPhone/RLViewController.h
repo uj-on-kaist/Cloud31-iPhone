@@ -39,4 +39,5 @@
 
 
 -(void)itemDeleted:(NSMutableDictionary *)item;
+-(void)orientationChanged;
 @end

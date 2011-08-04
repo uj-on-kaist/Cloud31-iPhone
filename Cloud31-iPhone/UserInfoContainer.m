@@ -91,4 +91,21 @@ static UserInfoContainer *sharedInfo = NULL;
     [app_delegate.navigationController setViewControllers:[NSArray arrayWithObject:[[SignViewController alloc] init]]];
 }
 
+-(NSString *)getSortType{
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    NSString *sort_type = [prefs objectForKey:@"sort_type"];
+    if(sort_type == nil || (![sort_type isEqualToString:@"reg_date"] && ![sort_type isEqualToString:@"update_date"])){
+        [prefs setObject:@"reg_date" forKey:@"sort_type"];
+        [prefs synchronize];
+        sort_type =@"reg_date";
+    }
+    return sort_type;
+}
+
+-(void)setSortType:(NSString *)type{
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setObject:type forKey:@"sort_type"];
+    [prefs synchronize];
+}
+
 @end

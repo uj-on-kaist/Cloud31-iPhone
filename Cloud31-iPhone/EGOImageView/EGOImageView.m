@@ -27,6 +27,8 @@
 #import "EGOImageView.h"
 #import "EGOImageLoader.h"
 
+#import "UserPictureContainer.h"
+
 @implementation EGOImageView
 @synthesize imageURL, placeholderImage, delegate;
 
@@ -60,16 +62,25 @@
 
 	[[EGOImageLoader sharedImageLoader] removeObserver:self];
 	UIImage* anImage = [[EGOImageLoader sharedImageLoader] imageForURL:aURL shouldLoadWithObserver:self];
-	
+    
+    
 	if(anImage) {
         if([self.delegate respondsToSelector:@selector(imageViewLoadedImage:)]) {
             [self.delegate imageViewLoadedImage:self];
         }
-		self.image = anImage;
+        UIGraphicsBeginImageContext(CGSizeMake(45.0f, 45.0f));
+        [anImage drawInRect:CGRectMake(0, 0, 45.0f, 45.0f)];
+        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();    
+        UIGraphicsEndImageContext();
+        self.image = newImage;
+        
+        [[UserPictureContainer sharedContainer] addUserImage:newImage withURL:[imageURL absoluteString]];
+		//self.image = anImage;
 	} else {
 		self.image = self.placeholderImage;
 	}
 }
+
 
 #pragma mark -
 #pragma mark Image loading
@@ -81,9 +92,15 @@
 
 - (void)imageLoaderDidLoad:(NSNotification*)notification {
 	if(![[[notification userInfo] objectForKey:@"imageURL"] isEqual:self.imageURL]) return;
-
+    
+    NSLog(@"loaded");
 	UIImage* anImage = [[notification userInfo] objectForKey:@"image"];
-	self.image = anImage;
+	UIGraphicsBeginImageContext(CGSizeMake(45.0f, 45.0f));
+    [anImage drawInRect:CGRectMake(0, 0, 45.0f, 45.0f)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();    
+    UIGraphicsEndImageContext();
+    self.image = newImage;
+	//self.image = anImage;
 	[self setNeedsDisplay];
 
 	if([self.delegate respondsToSelector:@selector(imageViewLoadedImage:)]) {

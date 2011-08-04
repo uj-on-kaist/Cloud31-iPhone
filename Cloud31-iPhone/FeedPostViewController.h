@@ -20,7 +20,7 @@
 @end
 
 
-@interface FeedPostViewController : UIViewController <UIActionSheetDelegate, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate, MKMapViewDelegate> {
+@interface FeedPostViewController : UIViewController <UIActionSheetDelegate, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate, MKMapViewDelegate, CLLocationManagerDelegate> {
     IBOutlet UILabel *userLabel;
     IBOutlet UITextView *inputView;
     id<FeedPostDelegate> delegate;
@@ -33,9 +33,10 @@
     UIControl *inputBGView;
     IBOutlet UIView *attachView;
     IBOutlet UIView *gpsView;
+    IBOutlet MKMapView *gpsMapView;
     
     MBProgressHUD *HUD;
-    
+    MBProgressHUD *errorHUD;
     UITableView *autoTableView;
     NSMutableArray *autoArray;
     
@@ -47,6 +48,12 @@
     NSString *attach_list;
     
     NSString *location_info;
+    
+    IBOutlet UIScrollView *imageScrollView;
+    
+    CLLocationManager *locationManager;
+    
+    BOOL locationFirst;
 }
 
 @property (nonatomic, retain) IBOutlet UIButton *atButton;
@@ -62,6 +69,10 @@
 
 @property (nonatomic, retain) NSString *attach_list;
 @property (nonatomic, retain) NSString *location_info;
+
+@property (nonatomic, retain) IBOutlet UIScrollView *imageScrollView;
+@property (nonatomic, retain) IBOutlet MKMapView *gpsMapView;
+@property (nonatomic, retain) CLLocationManager *locationManager;
 -(IBAction)cancel;
 
 -(void)makeSmallInputView;
@@ -73,4 +84,8 @@
 -(NSString*) stringWithUUID;
 
 -(void)setMarker:(MKCoordinateRegion)newRegion inMapView:(MKMapView *)mapView;
+
+-(void)showErrorHUD:(NSError *)error;
+
+-(IBAction)removeGPS;
 @end

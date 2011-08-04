@@ -14,14 +14,23 @@
 @interface FeedTableViewCell : UITableViewCell <EGOImageViewDelegate>{
     EGOImageView *profileView;
     
-    UILabel *author_label;
-    UILabel *contents_label;
+    TTStyledTextLabel *author_label;
+    TTStyledTextLabel *contents_label;
     
     UILabel *date_label;
     UILabel *comment_label;
     UIImageView *favorite_image;
     UIImageView *favorite_off_image;
-    UIImageView *bgView;
+    
+    
+    UIImageView *attachFileView;
+    UIImageView *attachImageView;
+    UIImageView *attachGPSView;
+    
+    TTView *bubbleView;
+    
+    
+    
 }
 
 -(void)prepareData:(NSMutableDictionary *)item;

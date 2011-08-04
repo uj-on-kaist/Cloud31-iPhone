@@ -7,13 +7,29 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MBProgressHUD.h"
 
-
-@interface SettingViewController : UIViewController  <UITableViewDelegate, UITableViewDataSource>{
+@class UserProfileSmallView;
+@class StyleView;
+@interface SettingViewController : UIViewController  <UIActionSheetDelegate, UITableViewDataSource, UITableViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate>{
     UITableView *_tableView;
+    
+    MBProgressHUD *HUD;
+    UIImagePickerController *imagePickerController;
+    
+    UserProfileSmallView *profileView;
+    StyleView* badge;
+    
+    
+    UITableViewCell *notiCell;
 }
 
 @property (nonatomic, retain) UITableView *_tableView;
 
 - (id)initWithFrame:(CGRect)frame;
+
+-(void)imageUpload;
+-(NSString*) stringWithUUID;
+
+-(void)setBadgeNumber;
 @end

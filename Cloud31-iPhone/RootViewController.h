@@ -15,12 +15,11 @@
 #import "SearchViewController.h"
 
 #import "FeedPostViewController.h"
-
+#import "MessagePostViewController.h"
 
 #import "RootTabBar.h"
 
-@interface RootViewController : UIViewController <UITableViewDelegate, UITableViewDelegate, UITabBarDelegate, FeedPostDelegate> {
-    UIView *titleView;
+@interface RootViewController : UIViewController <UITableViewDelegate, UITableViewDelegate, UITabBarDelegate, FeedPostDelegate, UIActionSheetDelegate, MessagePostDelegate> {
     
     IBOutlet RootTabBar *_tabBar;
     
@@ -31,8 +30,17 @@
     SettingViewController *settingViewController;
         
     UIViewController *currentViewController;
+    
+    UIBarButtonItem *leftBtn;
+    
 }
 
 @property (nonatomic ,retain) IBOutlet RootTabBar *_tabBar;
 
+
+-(NSString*)getSortType;
+
+-(void)got_notification;
+
+-(void)updateSubviewsOrientation;
 @end

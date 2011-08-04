@@ -19,26 +19,20 @@
     if (self) {
         // Initialization code
         favorite = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Favorite-Off.png"]];
-        favorite.frame=CGRectMake(frame.size.width-62, 1, 20, 20);
+        favorite.frame=CGRectMake(self.frame.size.width-62, 1, 20, 20);
         [self addSubview:favorite];
         
         UIImageView *bubble = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Chat.png"]];
-        bubble.frame=CGRectMake(frame.size.width-40, 0, 20, 20);
+        bubble.frame=CGRectMake(self.frame.size.width-40, 0, 20, 20);
         [self addSubview:bubble];
         
-        label= [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width-18, 0, 20, 20)];
-        label.text=@"7";
+        label= [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width-18, 0, 20, 20)];
+        label.text=@"";
         label.backgroundColor=[UIColor clearColor];
         label.font=[UIFont boldSystemFontOfSize:12.0f];
         label.textColor=[UIColor darkGrayColor];
         [self addSubview:label];
-
-        attach_view_arr=[[NSMutableArray alloc] init];
-        for(int i=0; i<4; i++){
-            UIImageView *view = [[UIImageView alloc] initWithFrame:CGRectMake(24*i-2, -2, 24, 24)];
-            [attach_view_arr addObject:view];
-            [self addSubview:view];
-        }
+        
     }
     return self;
 }
@@ -67,7 +61,7 @@
 -(void)setCommentCount:(int)count{
     label.text=[NSString stringWithFormat:@"%d",count];
 }
-
+/*
 -(void)setAttachInfo:(NSArray *)file_list withLocation:(BOOL)has_location{
     for(int i=0; i<[attach_view_arr count]; i++){
         UIImageView *view = (UIImageView *)[attach_view_arr objectAtIndex:i];
@@ -108,5 +102,6 @@
     }
 
 }
+ */
 
 @end

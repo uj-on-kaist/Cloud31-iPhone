@@ -20,6 +20,7 @@
 			<string>IBUINavigationItem</string>
 			<string>IBUITextView</string>
 			<string>IBMKMapView</string>
+			<string>IBUIScrollView</string>
 			<string>IBUIView</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -301,7 +302,7 @@
 					</object>
 					<object class="IBUIButton" id="664100388">
 						<reference key="NSNextResponder" ref="338380626"/>
-						<int key="NSvFlags">292</int>
+						<int key="NSvFlags">-2147483356</int>
 						<string key="NSFrame">{{10, 45}, {300, 37}}</string>
 						<reference key="NSSuperview" ref="338380626"/>
 						<reference key="NSWindow"/>
@@ -319,6 +320,18 @@
 							<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
 						</object>
 						<reference key="IBUINormalTitleShadowColor" ref="207897989"/>
+					</object>
+					<object class="IBUIScrollView" id="1047549090">
+						<reference key="NSNextResponder" ref="338380626"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{10, 45}, {300, 160}}</string>
+						<reference key="NSSuperview" ref="338380626"/>
+						<reference key="NSWindow"/>
+						<reference key="IBUIBackgroundColor" ref="34634177"/>
+						<bool key="IBUIClipsSubviews">YES</bool>
+						<bool key="IBUIMultipleTouchEnabled">YES</bool>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+						<bool key="IBUIShowsVerticalScrollIndicator">NO</bool>
 					</object>
 				</object>
 				<string key="NSFrameSize">{320, 214}</string>
@@ -346,7 +359,6 @@
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<bool key="IBUIMultipleTouchEnabled">YES</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<bool key="IBMKShowsUserLocation">YES</bool>
 					</object>
 					<object class="IBUIButton" id="806596765">
 						<reference key="NSNextResponder" ref="359641412"/>
@@ -510,6 +522,31 @@
 					</object>
 					<int key="connectionID">46</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">imageScrollView</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="1047549090"/>
+					</object>
+					<int key="connectionID">49</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">gpsMapView</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="70791435"/>
+					</object>
+					<int key="connectionID">51</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">removeGPS</string>
+						<reference key="source" ref="806596765"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">52</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -618,6 +655,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="401137670"/>
 							<reference ref="664100388"/>
+							<reference ref="1047549090"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -651,6 +689,11 @@
 						<reference key="object" ref="806596765"/>
 						<reference key="parent" ref="359641412"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">47</int>
+						<reference key="object" ref="1047549090"/>
+						<reference key="parent" ref="338380626"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -674,6 +717,7 @@
 					<string>4.IBPluginDependency</string>
 					<string>41.IBPluginDependency</string>
 					<string>42.IBPluginDependency</string>
+					<string>47.IBPluginDependency</string>
 					<string>5.IBPluginDependency</string>
 					<string>6.IBPluginDependency</string>
 					<string>8.IBPluginDependency</string>
@@ -684,6 +728,7 @@
 					<string>FeedPostViewController</string>
 					<string>UIResponder</string>
 					<string>{{556, 412}, {320, 480}}</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -716,7 +761,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">46</int>
+			<int key="maxID">52</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -725,14 +770,35 @@
 					<string key="className">FeedPostViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">cancel</string>
-						<string key="NS.object.0">id</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>cancel</string>
+							<string>removeGPS</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+						</object>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">cancel</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">cancel</string>
-							<string key="candidateClassName">id</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>cancel</string>
+							<string>removeGPS</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">cancel</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">removeGPS</string>
+								<string key="candidateClassName">id</string>
+							</object>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
@@ -743,7 +809,9 @@
 							<string>attachButton</string>
 							<string>attachView</string>
 							<string>gpsButton</string>
+							<string>gpsMapView</string>
 							<string>gpsView</string>
+							<string>imageScrollView</string>
 							<string>inputView</string>
 							<string>topicButton</string>
 							<string>userLabel</string>
@@ -754,7 +822,9 @@
 							<string>UIButton</string>
 							<string>UIView</string>
 							<string>UIButton</string>
+							<string>MKMapView</string>
 							<string>UIView</string>
+							<string>UIScrollView</string>
 							<string>UITextView</string>
 							<string>UIButton</string>
 							<string>UILabel</string>
@@ -768,7 +838,9 @@
 							<string>attachButton</string>
 							<string>attachView</string>
 							<string>gpsButton</string>
+							<string>gpsMapView</string>
 							<string>gpsView</string>
+							<string>imageScrollView</string>
 							<string>inputView</string>
 							<string>topicButton</string>
 							<string>userLabel</string>
@@ -792,8 +864,16 @@
 								<string key="candidateClassName">UIButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">gpsMapView</string>
+								<string key="candidateClassName">MKMapView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">gpsView</string>
 								<string key="candidateClassName">UIView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">imageScrollView</string>
+								<string key="candidateClassName">UIScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">inputView</string>

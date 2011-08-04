@@ -23,17 +23,36 @@
 
 @synthesize _tabBar,_userID,_userInfoView, userInfo;
 
+-(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
+    [self updateSubviewsOrientation];
+}
+-(void)updateSubviewsOrientation{
+    [_tabBar updateTrianglePosition];
+    NSArray *viewControllers = [NSArray arrayWithObjects:feedController,atController,favoriteController, nil];
+    for(UIViewController *viewController in viewControllers){
+        if([viewController respondsToSelector:@selector(orientationChanged)]){
+            [viewController performSelector:@selector(orientationChanged)];
+        }
+    }
+}
 
 -(id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withUserID:(NSString*)query{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if(self){
         self._userID=[NSString stringWithString:query];
         
-        CGRect frame = CGRectMake(0.0f, 0.0f, 320, 378);
+        //CGRect frame = CGRectMake(0.0f, 0.0f, 320, 378);
+        CGRect frame;
+        UIDeviceOrientation deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+        if(deviceOrientation == UIDeviceOrientationLandscapeLeft || deviceOrientation == UIDeviceOrientationLandscapeRight ){
+            frame=CGRectMake(0, 0, 480, 230);
+        }else{
+            frame=CGRectMake(0, 0, 320, 378);
+        }
+        
         feedController = [[FeedListViewController alloc] initWithFrame:frame withQueryURL:[NSString stringWithFormat:@"%@%@",USER_FEED_URL,self._userID]];
         atController = [[FeedListViewController alloc] initWithFrame:frame withQueryURL:[NSString stringWithFormat:@"%@%@",USER_AT_URL,self._userID]];
         favoriteController = [[FeedListViewController alloc] initWithFrame:frame withQueryURL:[NSString stringWithFormat:@"%@%@",USER_FAVORITE_URL,self._userID]];
-        
     }
     return self;
 }
@@ -60,7 +79,10 @@
     [self.view bringSubviewToFront:_tabBar];
     
     if(userInfo == nil){
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@/",USER_DETAIL_URL,self._userID]]];
+        
+        NSString *query = [[NSString stringWithFormat:@"%@%@/",USER_DETAIL_URL,self._userID]  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:query]];
+        //[@"http://..." stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding]
         [request startSynchronous];
         NSError *error = [request error];
         if (!error) {
@@ -92,6 +114,7 @@
     
     
     [_userInfoView reloadData];
+    [_tabBar updateTrianglePosition];
 }
 
 -(void)getUserInfo{
@@ -193,9 +216,9 @@
     NSInteger selectedIndex = [item tag];
     
     if(currentViewController != nil){
+        [currentViewController viewWillDisappear:YES];
         [currentViewController.view removeFromSuperview];
     }
-    
     if(selectedIndex == PROFILE_INDEX){
         currentViewController = nil;
     }else if(selectedIndex == FEED_INDEX){
@@ -229,5 +252,23 @@
     [self tabBar:_tabBar didSelectItem:item];
 }
 
+
+-(void)itemDeleted:(NSMutableDictionary *)item{
+    if([currentViewController respondsToSelector:@selector(itemDeleted:)]){
+        [currentViewController performSelector:@selector(itemDeleted:) withObject:item];
+    }
+}
+
+-(void)itemFavoriteChanged:(NSMutableDictionary *)item{
+    NSLog(@"favorite changed");
+    if([currentViewController respondsToSelector:@selector(itemFavoriteChanged:)]){
+        [currentViewController performSelector:@selector(itemFavoriteChanged:) withObject:item];
+    }
+}
+
+
+-(BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+    return YES;
+}
 
 @end

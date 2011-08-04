@@ -39,4 +39,7 @@
 
 -(void)selectTab:(int)index;
 -(void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item;
+
+-(void)updateSubviewsOrientation;
+
 @end

@@ -14,20 +14,35 @@
 
 @synthesize _tableView, items;
 
+-(void)orientationChanged{
+    UIDeviceOrientation deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    if(deviceOrientation == UIDeviceOrientationLandscapeLeft || deviceOrientation == UIDeviceOrientationLandscapeRight ){
+        self.view.frame=CGRectMake(0, 0, 480, 230);
+    }else{
+        self.view.frame=CGRectMake(0, 0, 320, 378);
+    }
+    self._tableView.frame=self.view.frame;
+    [self._tableView reloadData];
+}
+
 - (id)initWithFrame:(CGRect)frame{
     self = [super init];
     self.view.frame = frame;
     if (self) {
+        self.view.autoresizingMask=UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         items = [[NSMutableArray alloc] init];
         
         loadingView = [[UIView alloc] initWithFrame:self.view.frame];
-        UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(140, 165, 100, 20)];
+        loadingView.backgroundColor=[UIColor whiteColor];
+        loadingView.autoresizingMask=UIViewAutoresizingFlexibleWidth;
+        UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2.0f-20.0f, 165, 100, 20)];
         label.text=@"Loading...";
         label.textColor=[UIColor darkGrayColor];
-
+        label.autoresizingMask=UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         label.backgroundColor=[UIColor clearColor];
         UIActivityIndicatorView *activity=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         activity.frame=CGRectMake(110, 165, 20, 20);
+        activity.autoresizingMask=UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
         [activity startAnimating];
         
         [loadingView addSubview:activity];
@@ -38,6 +53,8 @@
         _tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
         _tableView.delegate=self;
         _tableView.dataSource=self;
+        _tableView.autoresizingMask=UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _tableView.autoresizesSubviews=YES;
         //_tableView.backgroundColor=BACKGROUND_COLOR;
         
         if (_refreshHeaderView == nil) {
@@ -71,7 +88,12 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    if([items count] == 0){
+    [self._tableView reloadData];
+    if(!animated){
+        if([loadingView superview] == nil)
+            [self.view addSubview:loadingView];
+        [self performSelector:@selector(loadData)];
+    }else if([items count] == 0){
         if([loadingView superview] == nil)
             [self.view addSubview:loadingView];
         [self performSelector:@selector(loadData)];
@@ -164,7 +186,7 @@
         [self.view addSubview:_tableView];
     }
     [_tableView reloadData];
-    
+    [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0.5];
 }
 
 -(void)loadMoreData:(int)base_id{
@@ -196,4 +218,18 @@
     }
     [self._tableView reloadData];
 }
+
+
+-(void)itemFavoriteChanged:(NSMutableDictionary *)item{
+    int item_id=[[item objectForKey:@"id"] intValue];
+    for(NSMutableDictionary *_item in items){
+        int _item_id = [[_item objectForKey:@"id"] intValue];
+        if(item_id == _item_id){
+            [_item setObject:[NSNumber numberWithBool:![[_item objectForKey:@"favorite"] boolValue]] forKey:@"favorite"];
+            break;
+        }
+    }
+    [self._tableView reloadData];
+}
+
 @end

@@ -36,8 +36,11 @@
     [self addSubview:bubble];
 }
 
+int startPosition2 = 30;
+int distance2 = 80;
+
 -(void)tabbarSelected:(int)index{
-    int position = 80*index+30;
+    int position = distance2*index+startPosition2;
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:0.2];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
@@ -72,5 +75,15 @@
     }
 }
 
+-(void)updateTrianglePosition{
+    UIDeviceOrientation deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    if(deviceOrientation == UIDeviceOrientationLandscapeLeft || deviceOrientation == UIDeviceOrientationLandscapeRight ){
+        startPosition2 = 50; distance2 = 120;
+    }else{
+        startPosition2 = 30; distance2 = 80;
+    }
+    
+    [self tabbarSelected:[[self selectedItem] tag]];
+}
 
 @end

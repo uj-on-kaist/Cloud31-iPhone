@@ -10,6 +10,7 @@
 
 @interface Cloud31_iPhoneAppDelegate : NSObject <UIApplicationDelegate> {
 
+    NSString *app_status;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
@@ -17,5 +18,6 @@
 @property (nonatomic, retain) IBOutlet UINavigationController *navigationController;
 
 -(void)checkLoginStatus;
+- (void)application:(UIApplication *)application didReceiveRemoteNotificationFromFirstLaunch:(NSDictionary *)userInfo;
 
 @end

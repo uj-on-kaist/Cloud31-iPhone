@@ -29,11 +29,16 @@
 @synthesize topic_id, topic_info;
 
 -(id)initWithTopicID:(NSString *)a_id{
-    self = [super initWithFrame:CGRectMake(0, 0, 320, 417)];
+    CGRect frame=CGRectMake(0, 0, 320, 417);
+    UIDeviceOrientation deviceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    if(deviceOrientation == UIDeviceOrientationLandscapeLeft || deviceOrientation == UIDeviceOrientationLandscapeRight ){
+        frame=CGRectMake(0, 0, 480, 269);
+    }
+    self = [super initWithFrame:frame];
     if (self) {
         // Custom initialization
         self.topic_id = a_id;
-        
+        self.view.autoresizingMask=UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
         
     }
@@ -169,7 +174,10 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
+}
+-(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
+    [self._tableView reloadData];
 }
 
 
@@ -222,13 +230,10 @@
         if([[item objectForKey:@"load_more"] isEqualToString:@"true"]){
             return 44.0f;
         }
-        if([item valueForKey:@"height"]){
-            return [[item valueForKey:@"height"] floatValue];
-        }else{
-            CGFloat height = [FeedTableViewCell calculateHeight:item];
-            [item setValue:[NSNumber numberWithFloat:height] forKey:@"height"];
-            return height;
-        }        
+        CGFloat height = [FeedTableViewCell calculateHeight:item];
+        [item setValue:[NSNumber numberWithFloat:height] forKey:@"height"];
+        return height;  
+                
     }
     return 44.0f;
 }

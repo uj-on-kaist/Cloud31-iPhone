@@ -58,7 +58,7 @@
     [profileView setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",ServiceURL, [item objectForKey:@"picture"]]]];
     
     userID.text=[NSString stringWithFormat:@"@%@",[item objectForKey:@"username"]];
-    username.text=[NSString stringWithFormat:@"@%@",[item objectForKey:@"name"]];
+    username.text=[NSString stringWithFormat:@"%@",[item objectForKey:@"name"]];
 }
 
 - (void)dealloc

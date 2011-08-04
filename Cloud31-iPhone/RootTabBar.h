@@ -16,4 +16,6 @@
 -(void)setItems;
 -(void)tabbarSelected:(int)index;
 
+-(void)updateCount;
+-(void)updateTrianglePosition;
 @end

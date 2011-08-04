@@ -13,15 +13,17 @@
     #import <Foundation/Foundation.h>
 #endif
 
+#define NSEUCKREncoding (-2147481280)
+
 #define RGB2(r, g, b) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1]
 #define RGBA2(r, g, b, a) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a]
 
 #define BACKGROUND_COLOR RGB2(245, 245, 245)
-
-#define devURL @"http://175.203.71.73:8000"
+#define NAVIGATION_TINT_COLOR RGB2(29, 45, 64)
+#define devURL @"http://175.203.71.99:8000"
 #define realURL @"http://cloud31.co.kr"
 
-#define ServiceURL [NSString stringWithFormat:@"%@",devURL]
+#define ServiceURL [NSString stringWithFormat:@"%@",realURL]
 
 #define LOGIN_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/login/"]
 #define LOGOUT_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/logout/"]
@@ -48,11 +50,14 @@
 #define SEARCH_TOPIC_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/search/topic"]
 
 #define FILE_UPLOAD_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/file/upload"]
+#define PICTURE_UPLOAD_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/picture/upload"]
+
 
 #define DELETE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/delete/"]
 #define FAVOR_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/favor/"]
 #define UNFAVOR_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/unfavor/"]
 
+#define TOPIC_POPULAR_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/topic/popular/"]
 #define TOPIC_DETAIL_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/topic/detail/"]
 #define TOPIC_FEED_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/feed/topic/"]
 
@@ -61,3 +66,21 @@
 #define USER_FEED_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/user/"]
 #define USER_AT_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/user_at/"]
 #define USER_FAVORITE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/api/feed/favorite/"]
+
+
+#define TOTAL_SEARCH_FEED_URL  [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/search/feed/"]
+#define TOTAL_SEARCH_FILE_URL   [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/search/file/"]
+#define TOTAL_SEARCH_MEMBER_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/search/member/"]
+#define TOTAL_SEARCH_TOPIC_URL  [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/search/topic/"]
+
+
+#define NOTIFICATION_GET_URL    [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/noti/get/"]
+#define NOTIFICATION_READ_URL    [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/noti/read/"]
+
+#define MESSAGE_UPDATE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/message/update/"]
+#define MESSAGE_DELETE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/message/delete/"]
+
+#define MESSAGE_DETAIL_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/message/get/"]
+#define REPLY_UPDATE_URL [NSString stringWithFormat:@"%@%@",ServiceURL,@"/mobile/message/reply/update/"]
+
+

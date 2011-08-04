@@ -12,6 +12,9 @@
 #import "Extensions/NSDictionary_JSONExtensions.h"
 
 #import "MessageTableViewCell.h"
+#import "MessageDetailViewController.h"
+
+#import "Cloud31_iPhoneAppDelegate.h"
 
 @implementation MessageViewController
 
@@ -42,7 +45,7 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
 }
 - (void)reloadTableViewDataSource{
 	
@@ -55,12 +58,9 @@
 - (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view{
 	
 	[self reloadTableViewDataSource];
-    [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0.5];
-	
 }
 
 -(void)loadData{
-    NSLog(@"Load data");
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:MESSAGE_ALL_URL]];
     [request setDelegate:self];
     [request startAsynchronous];
@@ -103,7 +103,10 @@
         NSDictionary *json = [NSDictionary dictionaryWithJSONString:response error:&theError];
         if(!theError && [[json objectForKey:@"success"] isEqualToNumber:[NSNumber numberWithInt:1]]){
             NSArray *array = [json objectForKey:@"feeds"];
-            [items removeLastObject];
+            NSMutableDictionary *last = [items lastObject];
+            if([[last objectForKey:@"load_more"] isEqualToString:@"true"]){
+                [items removeLastObject];
+            }
             for(NSDictionary *item in array){
                 NSMutableDictionary *_item = [NSMutableDictionary dictionaryWithDictionary:item];
                 [_item setObject:@"false" forKey:@"load_more"];
@@ -120,7 +123,8 @@
 - (void)requestFailed:(ASIHTTPRequest *)request
 {
     if(_data_loading){
-        
+        _data_loading=NO;
+        [super loadData];
     }else{
         NSError *error = [request error];
         NSLog(@"%@",[error localizedDescription]);
@@ -174,6 +178,15 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    NSMutableDictionary *item = [items objectAtIndex:indexPath.row];
+    MessageDetailViewController *messageDetailViewController = [[[MessageDetailViewController alloc] initWithItem:item] autorelease];
+    Cloud31_iPhoneAppDelegate *app_delegate = (Cloud31_iPhoneAppDelegate *)[[UIApplication sharedApplication] delegate];
+    [app_delegate.navigationController pushViewController:messageDetailViewController animated:YES];
+    
+    
 }
+
+
 
 @end

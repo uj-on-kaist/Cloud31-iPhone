@@ -15,6 +15,8 @@
 #import "FeedDetailViewController.h"
 #import "Cloud31_iPhoneAppDelegate.h"
 
+#import "UserInfoContainer.h"
+
 @implementation FeedListViewController
 
 @synthesize _queryURL;
@@ -23,7 +25,6 @@
     self = [super initWithFrame:frame];
     if (self) {
         self._queryURL=queryURL;
-
     }
     return self;
 }
@@ -54,7 +55,7 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
 }
 - (void)reloadTableViewDataSource{
 	
@@ -72,9 +73,8 @@
 }
 
 -(void)loadData{
-    NSLog(@"Load data 123123123");
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:self._queryURL]];
-    NSLog(@"%@",self._queryURL);
+    NSString *query = [self._queryURL  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",query]]];
     [request setDelegate:self];
     [request startAsynchronous];
     _data_loading=YES;
@@ -82,7 +82,9 @@
 
 -(void)loadMoreData:(int)base_id{
     [super loadMoreData:base_id];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?base_id=%d",self._queryURL, base_id]]];
+    
+    NSString *query = [self._queryURL  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?base_id=%d",query, base_id]]];
     [request setDelegate:self];
     _data_loading=NO;
     [request startAsynchronous];
@@ -145,6 +147,10 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *CellIdentifier = @"Cell";
+    if ([UIDevice currentDevice].orientation!=UIDeviceOrientationLandscapeLeft && [UIDevice currentDevice].orientation!=UIDeviceOrientationLandscapeRight) {
+        CellIdentifier= @"Cell_portrait";
+    }
+    else CellIdentifier= @"Cell_landscape";
     
     FeedTableViewCell *cell = (FeedTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
@@ -173,13 +179,12 @@
     }
     if([items count] > 0){
         NSMutableDictionary *item = [items objectAtIndex:indexPath.row];
-        if([item valueForKey:@"height"]){
-            return [[item valueForKey:@"height"] floatValue];
-        }else{
-            CGFloat height = [FeedTableViewCell calculateHeight:item];
-            [item setValue:[NSNumber numberWithFloat:height] forKey:@"height"];
-            return height;
-        }        
+        if([[item objectForKey:@"load_more"] isEqualToString:@"true"]){
+            return 44.0f;
+        }
+        CGFloat height = [FeedTableViewCell calculateHeight:item];
+        [item setValue:[NSNumber numberWithFloat:height] forKey:@"height"];
+        return height;        
     }
     return 44.0f;
 }

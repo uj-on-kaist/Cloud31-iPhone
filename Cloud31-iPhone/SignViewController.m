@@ -78,6 +78,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound |UIRemoteNotificationTypeAlert)];
+    
     // Do any additional setup after loading the view from its nib.
     self.navigationItem.title=@"Sign in";
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Enter" style:UIBarButtonItemStyleDone target:self action:@selector(start_login)];
@@ -91,6 +94,9 @@
     ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:LOGIN_URL]];
     [request setPostValue:self.userID forKey:@"userID"];
     [request setPostValue:self.userPW forKey:@"userPW"];
+    
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [request setPostValue:[prefs objectForKey:@"apsn_device_token"] forKey:@"deviceToken"];
     [request startSynchronous];
     NSError *error = [request error];
     if (!error) {

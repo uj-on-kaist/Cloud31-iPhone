@@ -9,8 +9,13 @@
 #import "Cloud31_iPhoneAppDelegate.h"
 #import "UserInfoContainer.h"
 
+#import "RootViewController.h"
 #import "SignViewController.h"
+#import "NotificationViewController.h"
+#import <AudioToolbox/AudioToolbox.h>
 
+#import "StyleSheet.h"
+#import "Three20/Three20.h"
 @implementation Cloud31_iPhoneAppDelegate
 
 
@@ -27,14 +32,21 @@
 }
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [TTStyleSheet setGlobalStyleSheet:[[[StyleSheet alloc] init] autorelease]];
+    [[TTURLRequestQueue mainQueue] setMaxContentLength:0];
+    
     [application setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
 
     // Override point for customization after application launch.
     // Add the navigation controller's view to the window and display.
     self.window.rootViewController = self.navigationController;
     
-    //[self checkLoginStatus];
+    self.navigationController.navigationBar.tintColor=RGB2(29, 45, 64);
     
+    if([launchOptions objectForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"] != nil){
+        [self application:[UIApplication sharedApplication] didReceiveRemoteNotificationFromFirstLaunch:[launchOptions objectForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"]];
+    }
+    //[self checkLoginStatus];
     return YES;
 }
 
@@ -83,6 +95,69 @@
     [_window release];
     [_navigationController release];
     [super dealloc];
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken 
+{ 
+    NSMutableString *deviceId = [NSMutableString string]; 
+    const unsigned char* ptr = (const unsigned char*) [deviceToken bytes]; 
+    NSLog(@"%@",deviceToken);
+    for(int i = 0 ; i < 32 ; i++) 
+    { 
+        [deviceId appendFormat:@"%02x", ptr[i]]; 
+    } 
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setObject:deviceId forKey:@"apsn_device_token"];
+    [prefs synchronize];
+    NSLog(@"APNS Device Token: %@", deviceId);
+} 
+-(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error{
+    NSLog(@"Failed: %@",error);
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{ 
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    //NSLog(@"%@",userInfo);
+    
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[[userInfo objectForKey:@"aps"] objectForKey:@"badge"] intValue]];
+    if([self.navigationController.visibleViewController respondsToSelector:@selector(got_notification)]){
+        [self.navigationController.visibleViewController performSelector:@selector(got_notification)];
+    }
+    
+    if([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive){
+        return;
+    }
+
+    if(![self.navigationController.visibleViewController isKindOfClass:[SignViewController class]] ){
+        NotificationViewController *notificationViewController=[[NotificationViewController alloc] init];
+        [self.navigationController pushViewController:notificationViewController animated:YES];
+        
+    }
+    
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotificationFromFirstLaunch:(NSDictionary *)userInfo
+{ 
+    if(![[UserInfoContainer sharedInfo] checkLogin]){
+        [self.navigationController setViewControllers:[NSArray arrayWithObject:[[SignViewController alloc] init]]];
+        [self.window makeKeyAndVisible];
+        return;
+    }else{
+        [self.navigationController setViewControllers:[NSArray arrayWithObject:[[RootViewController alloc] init]]];
+    }
+    
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    //NSLog(@"%@",userInfo);
+    
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[[userInfo objectForKey:@"aps"] objectForKey:@"badge"] intValue]];
+    if([self.navigationController.visibleViewController respondsToSelector:@selector(got_notification)]){
+        [self.navigationController.visibleViewController performSelector:@selector(got_notification)];
+    }
+    
+    NotificationViewController *notificationViewController=[[NotificationViewController alloc] init];
+    [self.navigationController pushViewController:notificationViewController animated:YES];
+    
 }
 
 @end
